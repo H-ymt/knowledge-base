@@ -1,0 +1,48 @@
+/** データ正規化（スタブ）。 */
+import type { GistApiItem, KnowledgeEntry, ZennFeed } from "@/lib/types";
+import { buildTags, toISODateString, toSlugWithHint } from "@/lib/types";
+
+export function normalizeGist(gists: ReadonlyArray<GistApiItem>): KnowledgeEntry[] {
+  return gists.map((g) => {
+    const title = g.description?.trim() || (Object.keys(g.files)[0] ?? g.id);
+    const slug = toSlugWithHint(title, g.id);
+    const languages = Object.values(g.files)
+      .map((f) => f.language || "")
+      .filter(Boolean) as string[];
+    const tags = buildTags(["gist", ...languages]);
+    const publishedAt = toISODateString(g.created_at) ?? toISODateString(g.updated_at)!;
+    const updatedAt = toISODateString(g.updated_at) ?? undefined;
+    return {
+      id: g.id,
+      source: "gist",
+      slug,
+      title,
+      summary: g.description ?? title,
+      url: g.html_url,
+      tags,
+      publishedAt,
+      updatedAt,
+      author: g.owner?.login ?? undefined,
+    } satisfies KnowledgeEntry;
+  });
+}
+
+export function normalizeZenn(feed: ZennFeed): KnowledgeEntry[] {
+  return feed.items.map((it) => {
+    const title = it.title?.trim() ?? it.link;
+    const id = it.id ?? it.link;
+    const slug = toSlugWithHint(title, id);
+    const publishedAt = it.pubDate ? toISODateString(it.pubDate) : null;
+    const tags = buildTags(["zenn"]);
+    return {
+      id,
+      source: "zenn",
+      slug,
+      title,
+      summary: it.description ?? title,
+      url: it.link,
+      tags,
+      publishedAt: publishedAt ?? toISODateString(Date.now())!,
+    } satisfies KnowledgeEntry;
+  });
+}

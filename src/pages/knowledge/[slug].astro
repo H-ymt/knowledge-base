@@ -1,0 +1,29 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import entriesData from "@/data/entries.json";
+import type { KnowledgeEntry } from "@/lib/types";
+
+export async function getStaticPaths() {
+  const entries = entriesData as KnowledgeEntry[];
+  return entries.map((e) => ({ params: { slug: String(e.slug) }, props: { entry: e, entries } }));
+}
+
+const { entry } = Astro.props as { entry: KnowledgeEntry };
+---
+
+<Layout>
+  <meta http-equiv="refresh" content={`0;url=${entry.url}`} />
+  <article class="container mx-auto space-y-4 p-6">
+    <h1 class="text-2xl">外部ページへ移動します…</h1>
+    <p class="text-main-body-lighter text-sm">自動的に移動しない場合は、以下のリンクをクリックしてください。</p>
+    <p>
+      <a href={entry.url} target="_blank" rel="noopener" class="text-link hover:underline">{entry.title} ↗</a>
+    </p>
+    <p class="text-sm">
+      <a href="/knowledge" class="hover:underline">← 一覧へ戻る</a>
+    </p>
+    <noscript>
+      <p class="text-main-body-lighter text-sm">JavaScript が無効です。上のリンクから外部ページを開いてください。</p>
+    </noscript>
+  </article>
+</Layout>
