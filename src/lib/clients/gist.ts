@@ -1,7 +1,8 @@
 /**
  * GitHub Gist API クライアント（スタブ）。
- * TODO: Task 3 で API レスポンス型を厳密化し、ETag を用いた差分取得を実装する。
+ * TODO: API 呼び出し実装と ETag 差分取得。
  */
+import type { GistApiItem } from "@/lib/types";
 
 export interface GistClientConfig {
   readonly username?: string;
@@ -9,10 +10,8 @@ export interface GistClientConfig {
 }
 
 export interface GistClient {
-  /**
-   * ユーザーの Gists を取得する（未実装）。
-   */
-  fetchUserGists: (options?: { readonly since?: string }) => Promise<unknown[]>;
+  /** ユーザーの Gists を取得する（未実装）。 */
+  fetchUserGists: (options?: { readonly since?: string }) => Promise<GistApiItem[]>;
 }
 
 export function createGistClient(config: GistClientConfig = {}): GistClient {
@@ -25,8 +24,7 @@ export function createGistClient(config: GistClientConfig = {}): GistClient {
       if (!username) {
         throw new Error("GistClient: username が未設定です");
       }
-      return [] as unknown[];
+      return [] as GistApiItem[];
     },
   };
 }
-

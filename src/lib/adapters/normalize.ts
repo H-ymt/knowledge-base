@@ -1,30 +1,12 @@
-/**
- * データ正規化（スタブ）。
- * Task 3 で `KnowledgeEntry` 型を専用モジュールに切り出し、ここから参照する形に移行する。
- */
+/** データ正規化（スタブ）。 */
+import type { GistApiItem, KnowledgeEntry, ZennFeed } from "@/lib/types";
 
-export type KnowledgeEntry = {
-  id: string;
-  source: "gist" | "zenn";
-  slug: string;
-  title: string;
-  summary: string;
-  url: string;
-  tags: { raw: string; norm: string }[];
-  publishedAt: string;
-  updatedAt?: string;
-  contentHtml?: string;
-  author?: string;
-  image?: string;
-};
-
-export function normalizeGist(_gists: unknown[]): KnowledgeEntry[] {
+export function normalizeGist(_gists: ReadonlyArray<GistApiItem>): KnowledgeEntry[] {
   // スタブ: 後で実装
   return [];
 }
 
-export function normalizeZenn(_feed: unknown): KnowledgeEntry[] {
+export function normalizeZenn(_feed: ZennFeed): KnowledgeEntry[] {
   // スタブ: 後で実装
   return [];
 }
-
