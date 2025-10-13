@@ -6,6 +6,10 @@
 
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
+import { createGistClient } from "@/lib/clients/gist";
+import { createZennClient } from "@/lib/clients/zenn";
+import { normalizeGist, normalizeZenn } from "@/lib/adapters/normalize";
+import type { KnowledgeEntry } from "@/lib/types";
 
 type Env = {
   readonly GITHUB_USERNAME?: string;
@@ -51,15 +55,60 @@ async function main(): Promise<void> {
   // 雛形フェーズ: 出力先の存在だけ整える（空配列を確保）。
   await Promise.all([ensureFile(out.entriesJson), ensureFile(out.tagsJson)]);
 
-  // 次段の実装方針を表示（ログとして記録）。
   console.info("[fetch-knowledge] start");
   console.info("env.GITHUB_USERNAME=%s, env.ZENN_USER=%s", env.GITHUB_USERNAME ?? "-", env.ZENN_USER ?? "-");
   console.info("output=%o", out);
-  console.info("[fetch-knowledge] TODO: gist/zenn 取得 → 正規化 → JSON 書き出し");
+
+  const tasks: Promise<KnowledgeEntry[]>[] = [];
+  // Gist
+  if (env.GITHUB_USERNAME) {
+    const gist = createGistClient({ username: env.GITHUB_USERNAME, token: env.GITHUB_TOKEN });
+    tasks.push(
+      gist
+        .fetchUserGists()
+        .then((items) => normalizeGist(items))
+        .catch((e) => {
+          console.warn("[fetch-knowledge] gist skipped: %s", String(e));
+          return [] as KnowledgeEntry[];
+        })
+    );
+  }
+  // Zenn
+  if (env.ZENN_USER) {
+    const zenn = createZennClient({ user: env.ZENN_USER });
+    tasks.push(
+      zenn
+        .fetchFeed()
+        .then((feed) => normalizeZenn(feed))
+        .catch((e) => {
+          console.warn("[fetch-knowledge] zenn skipped: %s", String(e));
+          return [] as KnowledgeEntry[];
+        })
+    );
+  }
+
+  const lists = await Promise.all(tasks);
+  const entries = lists.flat();
+  // タグ集計
+  const tagSet = new Map<string, { raw: string; norm: string; count: number }>();
+  for (const e of entries) {
+    for (const t of e.tags) {
+      const cur = tagSet.get(t.norm);
+      if (cur) cur.count += 1;
+      else tagSet.set(t.norm, { raw: t.raw, norm: t.norm, count: 1 });
+    }
+  }
+  const tags = Array.from(tagSet.values())
+    .sort((a, b) => b.count - a.count)
+    .map(({ raw, norm }) => ({ raw, norm }));
+
+  // 出力
+  await writeFile(out.entriesJson, JSON.stringify(entries, null, 2) + "\n", "utf-8");
+  await writeFile(out.tagsJson, JSON.stringify(tags, null, 2) + "\n", "utf-8");
+  console.info("[fetch-knowledge] done: entries=%d, tags=%d", entries.length, tags.length);
 }
 
 void main().catch((err) => {
   console.error("[fetch-knowledge] failed:", err);
   process.exitCode = 1;
 });
-

@@ -3,6 +3,7 @@
  * TODO: API 呼び出し実装と ETag 差分取得。
  */
 import type { GistApiItem } from "@/lib/types";
+import { getETag, setETag } from "@/lib/adapters/cache";
 
 export interface GistClientConfig {
   readonly username?: string;
@@ -10,7 +11,7 @@ export interface GistClientConfig {
 }
 
 export interface GistClient {
-  /** ユーザーの Gists を取得する（未実装）。 */
+  /** ユーザーの Gists を取得（ETag 差分）。 */
   fetchUserGists: (options?: { readonly since?: string }) => Promise<GistApiItem[]>;
 }
 
@@ -20,11 +21,28 @@ export function createGistClient(config: GistClientConfig = {}): GistClient {
 
   return {
     async fetchUserGists() {
-      // スタブ: 後で実装
-      if (!username) {
-        throw new Error("GistClient: username が未設定です");
+      if (!username) throw new Error("GistClient: username が未設定です");
+
+      const url = new URL(`https://api.github.com/users/${encodeURIComponent(username)}/gists`);
+      url.searchParams.set("per_page", "100");
+
+      const headers: Record<string, string> = { "User-Agent": "knowledge-base-fetch" };
+      const etagKey = `gist:${username}`;
+      const prevEtag = await getETag(etagKey);
+      if (prevEtag) headers["If-None-Match"] = prevEtag;
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+
+      const res = await fetch(url, { headers });
+      if (res.status === 304) {
+        return [];
       }
-      return [] as GistApiItem[];
+      if (!res.ok) {
+        throw new Error(`GistClient: HTTP ${res.status}`);
+      }
+      const etag = res.headers.get("etag");
+      if (etag) await setETag(etagKey, etag);
+      const data = (await res.json()) as unknown;
+      return Array.isArray(data) ? (data as GistApiItem[]) : [];
     },
   };
 }
