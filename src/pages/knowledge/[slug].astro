@@ -1,0 +1,71 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import entriesData from "@/data/entries.json";
+import type { KnowledgeEntry } from "@/lib/types";
+
+export async function getStaticPaths() {
+  const entries = (entriesData as KnowledgeEntry[]);
+  return entries.map((e) => ({ params: { slug: String(e.slug) }, props: { entry: e, entries } }));
+}
+
+const { entry, entries } = Astro.props as { entry: KnowledgeEntry; entries: KnowledgeEntry[] };
+
+function relatedOf(all: KnowledgeEntry[], target: KnowledgeEntry): KnowledgeEntry[] {
+  const tagSet = new Set(target.tags.map((t) => t.norm));
+  return all
+    .filter((e) => e.id !== target.id)
+    .map((e) => ({ e, score: e.tags.reduce((acc, t) => acc + (tagSet.has(t.norm) ? 1 : 0), 0) }))
+    .filter((x) => x.score > 0)
+    .sort((a, b) => (b.score - a.score) || (a.e.publishedAt > b.e.publishedAt ? -1 : 1))
+    .slice(0, 5)
+    .map((x) => x.e);
+}
+
+const related = relatedOf(entries, entry);
+---
+
+<Layout>
+  <article class="container mx-auto p-6 space-y-6">
+    <nav class="text-sm">
+      <a href="/knowledge" class="text-link hover:underline">← 一覧へ戻る</a>
+    </nav>
+
+    <header class="space-y-2">
+      <h1 class="text-3xl">{entry.title}</h1>
+      <p class="text-sm text-main-body-lighter">
+        公開: {new Date(entry.publishedAt).toLocaleString("ja-JP")} {entry.updatedAt && <> / 更新: {new Date(entry.updatedAt).toLocaleString("ja-JP")}</>}
+      </p>
+      <div class="flex flex-wrap gap-2">
+        {entry.tags.map((t) => (
+          <span class="text-xs px-2 py-0.5 rounded-full bg-main-50 text-main-700">{t.norm}</span>
+        ))}
+      </div>
+    </header>
+
+    <section class="prose max-w-none">
+      {entry.contentHtml ? (
+        <Fragment set:html={entry.contentHtml} />
+      ) : (
+        <p class="text-main-body-lighter">本文は外部でご覧ください。</p>
+      )}
+      <p class="mt-4">
+        <a href={entry.url} target="_blank" rel="noopener" class="text-link hover:underline">ソースを開く ↗</a>
+      </p>
+    </section>
+
+    {related.length > 0 && (
+      <aside class="space-y-3">
+        <h2 class="text-xl">関連</h2>
+        <ul class="space-y-2">
+          {related.map((e) => (
+            <li>
+              <a href={`/knowledge/${e.slug}`} class="hover:underline">{e.title}</a>
+              <span class="text-xs text-main-body-lighter ml-2">{new Date(e.publishedAt).toLocaleDateString("ja-JP")}</span>
+            </li>
+          ))}
+        </ul>
+      </aside>
+    )}
+  </article>
+</Layout>
+

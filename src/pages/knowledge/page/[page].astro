@@ -1,0 +1,67 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import entriesData from "@/data/entries.json";
+import type { KnowledgeEntry } from "@/lib/types";
+
+export interface Props {
+  page: number;
+  items: KnowledgeEntry[];
+  total: number;
+}
+
+export async function getStaticPaths() {
+  const entries = (entriesData as KnowledgeEntry[]);
+  const pageSize = 20;
+  const totalPages = Math.ceil(entries.length / pageSize);
+  return Array.from({ length: totalPages - 1 }, (_, i) => {
+    const page = i + 2; // 2 ページ目以降
+    const start = (page - 1) * pageSize;
+    const items = entries.slice(start, start + pageSize);
+    return { params: { page: String(page) }, props: { page, items, total: entries.length } satisfies Props };
+  });
+}
+
+const { page, items, total } = Astro.props as Props;
+const pageSize = 20;
+const totalPages = Math.ceil(total / pageSize);
+---
+
+<Layout>
+  <section class="container mx-auto p-6 space-y-6">
+    <header class="space-y-1">
+      <h1 class="text-3xl">Knowledge</h1>
+      <p class="text-sm text-main-body-lighter">{total} 件 / ページ {page} / {totalPages}</p>
+    </header>
+
+    <ul class="space-y-4">
+      {items.map((e) => (
+        <li class="border border-main-200 rounded-md p-4 hover:bg-main-25 transition">
+          <a href={`/knowledge/${e.slug}`} class="block">
+            <h2 class="text-xl mb-1">{e.title}</h2>
+            <p class="text-sm mb-2 text-main-body-lighter">{new Date(e.publishedAt).toLocaleDateString("ja-JP")}</p>
+            <p class="text-sm line-clamp-2">{e.summary}</p>
+            <div class="mt-2 flex flex-wrap gap-2">
+              {e.tags.slice(0, 6).map((t) => (
+                <span class="text-xs px-2 py-0.5 rounded-full bg-main-50 text-main-700">{t.norm}</span>
+              ))}
+            </div>
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <nav class="flex items-center justify-between text-sm">
+      <div>
+        {page > 1 && (
+          <a class="px-3 py-1 rounded border border-main-300 hover:bg-main-50" href={page === 2 ? "/knowledge" : `/knowledge/page/${page - 1}`}>← 前のページ</a>
+        )}
+      </div>
+      <div>
+        {page < totalPages && (
+          <a class="px-3 py-1 rounded border border-main-300 hover:bg-main-50" href={`/knowledge/page/${page + 1}`}>次のページ →</a>
+        )}
+      </div>
+    </nav>
+  </section>
+</Layout>
+
