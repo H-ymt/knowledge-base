@@ -3,7 +3,6 @@
 @theme {
   --font-base: Inter, Arial, Hiragino Kaku Gothic ProN, Hiragino Sans, Noto Sans JP, sans-serif, Segoe UI Emoji, Segoe UI Symbol;
 
-  --color-placeholder: #93a0a7;
   --color-main-body: #080d12cc;
   --color-main-body-lighter: #080d1299;
   --color-main-bg: #fff;
@@ -21,12 +20,6 @@
   --color-main-800: #5f6a6f;
   --color-main-900: #4b5256;
 
-  --color-primary: #24afff;
-  --color-primary-dark: #09a5ff;
-  --color-primary-darker: #008cf0;
-  --color-primary-lighter: #3bb7ff;
-  --color-primary-bg: #ebf6ff;
-  --color-primary-bg-lighter: #f3f9fe;
   --color-link-text: #0089f2;
   --color-danger: #ff6161;
   --color-danger-darker: #ff4d4d;
@@ -35,7 +28,7 @@
 }
 
 body {
-  @apply bg-primary-bg text-main-body-lighter font-base;
+  @apply text-main-body-lighter font-base bg-white;
 }
 
 h1,
