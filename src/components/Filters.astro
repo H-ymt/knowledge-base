@@ -10,6 +10,7 @@ const url = new URL(Astro.url);
 const currentSource = url.searchParams.get("source"); // gist|zenn
 const currentTag = url.searchParams.get("tag");
 const currentQ = url.searchParams.get("q");
+const hasFilters = Boolean(currentSource || currentTag || currentQ);
 
 function linkWith(next: Record<string, string | null>): string {
   const u = new URL(Astro.url);
@@ -53,4 +54,12 @@ function linkWith(next: Record<string, string | null>): string {
     <Input name="q" size="sm" value={currentQ ?? ""} placeholder="タイトル/要約" />
     <Button type="submit" variant="secondary" size="sm">検索</Button>
   </label>
+
+  {hasFilters && (
+    <div class="ml-2">
+      <Button href={new URL(Astro.url).pathname} variant="ghost" size="sm" ariaLabel="フィルタをクリア">
+        クリア
+      </Button>
+    </div>
+  )}
 </form>

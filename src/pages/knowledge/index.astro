@@ -13,6 +13,7 @@ const u = new URL(Astro.url);
 const qTag = u.searchParams.get("tag");
 const qSource = u.searchParams.get("source");
 const q = (u.searchParams.get("q") ?? "").trim().toLowerCase();
+const search = u.search;
 
 let filtered = entries;
 if (qSource === "gist" || qSource === "zenn") {
@@ -53,7 +54,7 @@ const allTags = (tagsData as Tag[]);
 
     {totalPages > 1 && (
       <nav class="flex items-center justify-end gap-2 text-sm" aria-label="ページネーション">
-        <a class="px-3 py-1 rounded border border-main-300 hover:bg-main-50" href="/knowledge/page/2">次のページ →</a>
+        <a class="px-3 py-1 rounded border border-main-300 hover:bg-main-50" href={`/knowledge/page/2${search}`}>次のページ →</a>
       </nav>
     )}
   </section>

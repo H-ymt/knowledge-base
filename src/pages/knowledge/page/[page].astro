@@ -2,6 +2,7 @@
 import Layout from "../../../layouts/Layout.astro";
 import entriesData from "@/data/entries.json";
 import type { KnowledgeEntry } from "@/lib/types";
+import Filters from "@/components/Filters.astro";
 import KnowledgeCard from "@/components/KnowledgeCard.astro";
 
 export interface Props {
@@ -34,6 +35,8 @@ const totalPages = Math.ceil(total / pageSize);
       <p class="text-sm text-main-body-lighter">{total} 件 / ページ {page} / {totalPages}</p>
     </header>
 
+    <Filters />
+
     <ul class="space-y-4">
       {items.map((e) => (
         <li>
@@ -42,17 +45,27 @@ const totalPages = Math.ceil(total / pageSize);
       ))}
     </ul>
 
-    <nav class="flex items-center justify-between text-sm">
+    <nav class="flex items-center justify-between text-sm" aria-label="ページネーション">
       <div>
-        {page > 1 && (
-          <a class="px-3 py-1 rounded border border-main-300 hover:bg-main-50" href={page === 2 ? "/knowledge" : `/knowledge/page/${page - 1}`}>← 前のページ</a>
-        )}
+        {page > 1 && (<a data-keep-search="1" class="px-3 py-1 rounded border border-main-300 hover:bg-main-50" href={page === 2 ? "/knowledge" : `/knowledge/page/${page - 1}`}>← 前のページ</a>)}
       </div>
       <div>
-        {page < totalPages && (
-          <a class="px-3 py-1 rounded border border-main-300 hover:bg-main-50" href={`/knowledge/page/${page + 1}`}>次のページ →</a>
-        )}
+        {page < totalPages && (<a data-keep-search="1" class="px-3 py-1 rounded border border-main-300 hover:bg-main-50" href={`/knowledge/page/${page + 1}`}>次のページ →</a>)}
       </div>
     </nav>
   </section>
+
+  <script>
+    const qs = window.location.search;
+    if (qs) {
+      document.querySelectorAll('a[data-keep-search="1"]').forEach((a) => {
+        try {
+          const u = new URL(a.href, location.origin);
+          if (!u.search) u.search = qs;
+          else if (!u.search.includes(qs.slice(1))) u.search += (u.search ? '&' : '?') + qs.slice(1);
+          a.href = u.pathname + u.search;
+        } catch {}
+      });
+    }
+  </script>
 </Layout>
