@@ -1,6 +1,8 @@
 ---
 import type { Tag } from "@/lib/types";
 import tagsData from "@/data/tags.json";
+import Button from "@/components/ui/Button.astro";
+import Select from "@/components/ui/Select.astro";
 
 const allTags = (tagsData as Tag[]);
 const url = new URL(Astro.url);
@@ -20,19 +22,25 @@ function linkWith(next: Record<string, string | null>): string {
 <form class="flex flex-wrap gap-3 items-center" aria-label="フィルタ">
   <fieldset class="flex items-center gap-2">
     <legend class="sr-only">ソース</legend>
-    <a href={linkWith({ source: null })} class="px-3 py-1 rounded border border-main-300 hover:bg-main-50" aria-current={currentSource ? "false" : "true"}>All</a>
-    <a href={linkWith({ source: "gist" })} class="px-3 py-1 rounded border border-main-300 hover:bg-main-50" aria-current={currentSource === "gist" ? "true" : "false"}>Gist</a>
-    <a href={linkWith({ source: "zenn" })} class="px-3 py-1 rounded border border-main-300 hover:bg-main-50" aria-current={currentSource === "zenn" ? "true" : "false"}>Zenn</a>
+    <Button href={linkWith({ source: null })} variant={currentSource ? "outline" : "primary"} size="sm" ariaLabel="すべて">
+      All
+    </Button>
+    <Button href={linkWith({ source: "gist" })} variant={currentSource === "gist" ? "primary" : "outline"} size="sm" ariaLabel="Gist のみ">
+      Gist
+    </Button>
+    <Button href={linkWith({ source: "zenn" })} variant={currentSource === "zenn" ? "primary" : "outline"} size="sm" ariaLabel="Zenn のみ">
+      Zenn
+    </Button>
   </fieldset>
 
-  <label class="text-sm">
-    <span class="mr-2">タグ</span>
-    <select class="px-2 py-1 border border-main-300 rounded" name="tag" on:change={(e) => (location.href = linkWith({ tag: (e.target as HTMLSelectElement).value || null }))}>
-      <option value="" selected={currentTag === null}>すべて</option>
-      {allTags.map((t) => (
-        <option value={t.norm} selected={currentTag === t.norm}>{t.norm}</option>
-      ))}
-    </select>
+  <label class="text-sm flex items-center gap-2">
+    <span>タグ</span>
+    <Select
+      name="tag"
+      size="sm"
+      value={currentTag ?? ""}
+      options={[{ value: "", label: "すべて" }, ...allTags.map((t) => ({ value: t.norm, label: t.norm }))]}
+      on:change={(e) => (location.href = linkWith({ tag: (e.target as HTMLSelectElement).value || null }))}
+    />
   </label>
 </form>
-
