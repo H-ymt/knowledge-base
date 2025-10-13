@@ -1,5 +1,5 @@
 ---
-import Layout from "../../../layouts/Layout.astro";
+import Layout from "../../layouts/Layout.astro";
 import entriesData from "@/data/entries.json";
 import type { KnowledgeEntry } from "@/lib/types";
 import KnowledgeCard from "@/components/KnowledgeCard.astro";
@@ -28,13 +28,13 @@ const totalPages = Math.ceil(total / pageSize);
 ---
 
 <Layout>
-  <section class="container mx-auto space-y-6 p-6">
+  <section class="mx-auto space-y-6 pt-16 pb-20">
     <header class="space-y-1">
       <h1 class="text-3xl">Knowledge</h1>
       <p class="text-main-body-lighter text-sm">{total} 件 / ページ {page} / {totalPages}</p>
     </header>
 
-    <ul class="space-y-4">
+    <ul class="space-y-6 lg:space-y-10" aria-label="記事一覧">
       {
         items.map((e) => (
           <li>
@@ -48,10 +48,7 @@ const totalPages = Math.ceil(total / pageSize);
       <div>
         {
           page > 1 && (
-            <a
-              class="border-main-300 hover:bg-main-50 rounded border px-3 py-1"
-              href={page === 2 ? "/knowledge" : `/knowledge/page/${page - 1}`}
-            >
+            <a class="border-main-300 hover:bg-main-50 rounded border px-3 py-1" href={page === 2 ? "/" : `/page/${page - 1}`}>
               ← 前のページ
             </a>
           )
@@ -60,7 +57,7 @@ const totalPages = Math.ceil(total / pageSize);
       <div>
         {
           page < totalPages && (
-            <a class="border-main-300 hover:bg-main-50 rounded border px-3 py-1" href={`/knowledge/page/${page + 1}`}>
+            <a class="border-main-300 hover:bg-main-50 rounded border px-3 py-1" href={`/page/${page + 1}`}>
               次のページ →
             </a>
           )

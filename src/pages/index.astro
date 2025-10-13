@@ -1,13 +1,42 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import entriesData from "@/data/entries.json";
+import type { KnowledgeEntry } from "@/lib/types";
+import KnowledgeCard from "@/components/KnowledgeCard.astro";
+
+const entries = entriesData as unknown as KnowledgeEntry[];
+const pageSize = 20;
+
+const pageEntries = entries.slice(0, pageSize);
+const totalPages = Math.ceil(entries.length / pageSize);
 ---
 
 <Layout>
-  <div class="p-8">
-    <h1 class="text-3xl">Hello Astro!!</h1>
-    <p>
-      Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ratione debitis possimus minus accusamus eligendi dicta facilis. Ut nisi ea
-      suscipit.
-    </p>
-  </div>
+  <section class="mx-auto space-y-6 pt-16 pb-20">
+    <header class="space-y-1">
+      <h1 class="text-2xl">Knowledge</h1>
+      <p class="text-main-body-lighter text-sm">{entries.length} 件</p>
+    </header>
+
+    <ul class="space-y-6 lg:space-y-10" aria-label="記事一覧">
+      {
+        pageEntries.map((e) => (
+          <li>
+            <KnowledgeCard entry={e} />
+          </li>
+        ))
+      }
+      {pageEntries.length === 0 && <li class="text-main-body-lighter text-sm">該当する記事がありません</li>}
+    </ul>
+
+    {
+      totalPages > 1 && (
+        <nav class="flex items-center justify-end gap-2 text-sm" aria-label="ページネーション">
+          <a class="border-main-300 hover:bg-main-50 rounded border px-3 py-1" href="/page/2">
+            次のページ →
+          </a>
+        </nav>
+      )
+    }
+  </section>
 </Layout>
