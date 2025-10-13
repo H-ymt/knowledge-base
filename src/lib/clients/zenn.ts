@@ -8,19 +8,19 @@ export interface ZennClientConfig {
 
 export interface ZennClient {
   /** ユーザーの RSS フィードを取得する。 */
-  fetchFeed: () => Promise<ZennFeed>;
+  fetchFeed: (options?: { readonly force?: boolean }) => Promise<ZennFeed>;
 }
 
 export function createZennClient(config: ZennClientConfig = {}): ZennClient {
   const { user } = config;
   return {
-    async fetchFeed() {
+    async fetchFeed(options) {
       if (!user) throw new Error("ZennClient: user が未設定です");
       const url = new URL(`https://zenn.dev/${encodeURIComponent(user)}/feed`);
 
       const headers: Record<string, string> = { "User-Agent": "knowledge-base-fetch" };
       const etagKey = `zenn:${user}`;
-      const prevEtag = await getETag(etagKey);
+      const prevEtag = options?.force ? undefined : await getETag(etagKey);
       if (prevEtag) headers["If-None-Match"] = prevEtag;
 
       const res = await fetch(url, { headers });
