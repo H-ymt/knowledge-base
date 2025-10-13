@@ -1,8 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import entriesData from "@/data/entries.json";
-import tagsData from "@/data/tags.json";
-import type { KnowledgeEntry, Tag } from "@/lib/types";
+import type { KnowledgeEntry } from "@/lib/types";
 import KnowledgeCard from "@/components/KnowledgeCard.astro";
 import Filters from "@/components/Filters.astro";
 
@@ -31,17 +30,7 @@ if (q) {
 
 const pageEntries = filtered.slice(0, pageSize);
 const totalPages = Math.ceil(filtered.length / pageSize);
-const allTags = (tagsData as Tag[]);
-const clientEntries = entries.map((e) => ({
-  id: e.id,
-  source: e.source,
-  slug: e.slug,
-  title: e.title,
-  summary: e.summary,
-  url: e.url,
-  tags: e.tags,
-  publishedAt: e.publishedAt,
-}));
+// tagsData は Filters 内で直接参照するため、このファイルでは未使用
 ---
 
 <Layout>
@@ -68,6 +57,7 @@ const clientEntries = entries.map((e) => ({
       </nav>
     )}
   </section>
-  <script type="application/json" id="kb-entries">{JSON.stringify(clientEntries)}</script>
+  <script type="application/json" id="kb-entries">{JSON.stringify(entries.map((e) => ({ id: e.id, source: e.source, slug: e.slug, title: e.title, summary: e.summary, url: e.url, tags: e.tags, publishedAt: e.publishedAt })))}
+  </script>
   <script type="module" src="/src/components/search/client-search-fuse.js"></script>
 </Layout>

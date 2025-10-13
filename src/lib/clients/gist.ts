@@ -31,7 +31,6 @@ export function createGistClient(config: GistClientConfig = {}): GistClient {
 
   async function fetchWithRetry(input: URL, headers: Record<string, string>, maxAttempts = 3): Promise<Response> {
     let attempt = 0;
-    // eslint-disable-next-line no-constant-condition
     while (true) {
       attempt++;
       const res = await fetch(input, { headers });
