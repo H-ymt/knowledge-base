@@ -10,15 +10,15 @@ const isExternal = entry.source === "zenn" || entry.source === "gist";
 const href = isExternal ? entry.url : `/knowledge/${entry.slug}`;
 ---
 
-<article class="border-main-200 hover:bg-main-25 rounded-md border p-4 transition" aria-labelledby={`title-${entry.id}`}>
+<article class="hover:bg-main-25 rounded-md p-4 transition" aria-labelledby={`title-${entry.id}`}>
   <a
     href={href}
     class="focus:ring-purple block focus:ring-2 focus:outline-none"
     target={isExternal ? "_blank" : undefined}
     rel={isExternal ? "noopener" : undefined}
   >
-    <h2 id={`title-${entry.id}`} class="mb-1 text-xl">{entry.title}</h2>
-    <p class="text-main-body-lighter mb-2 text-sm">
+    <h2 id={`title-${entry.id}`} class="mb-1">{entry.title}</h2>
+    <p class="text-main-body-lighter mb-2 text-xs">
       {new Date(entry.publishedAt).toLocaleDateString("ja-JP")}
       {
         entry.updatedAt && (
@@ -29,12 +29,12 @@ const href = isExternal ? entry.url : `/knowledge/${entry.slug}`;
         )
       }
     </p>
-    <p class="line-clamp-2 text-sm">{entry.summary}</p>
+    <p class="line-clamp-2 text-xs">{entry.summary}</p>
     {
       entry.tags.length > 0 && (
         <div class="mt-2 flex flex-wrap gap-2">
           {entry.tags.slice(0, 8).map((t) => (
-            <span class="bg-main-50 text-main-700 rounded-full px-2 py-0.5 text-xs">{t.norm}</span>
+            <span class="bg-main-50 text-main-700 rounded-full px-2.5 py-0.75 text-xs">{t.norm}</span>
           ))}
         </div>
       )
