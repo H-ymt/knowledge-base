@@ -14,13 +14,13 @@ export interface Tag {
 export interface KnowledgeEntry {
   readonly id: string;
   readonly source: Source;
-  readonly slug: string;
+  readonly slug: import("./utils").Slug;
   readonly title: string;
   readonly summary: string;
   readonly url: string;
   readonly tags: ReadonlyArray<Tag>;
-  readonly publishedAt: string; // ISO8601
-  readonly updatedAt?: string; // ISO8601
+  readonly publishedAt: import("./utils").ISODateString; // ISO8601
+  readonly updatedAt?: import("./utils").ISODateString; // ISO8601
   readonly contentHtml?: string;
   readonly author?: string;
   readonly image?: string;
@@ -64,3 +64,14 @@ export interface ZennFeed {
   readonly items: ReadonlyArray<ZennFeedItem>;
 }
 
+// Re-exports for convenience
+export type { Slug, ISODateString } from "./utils";
+export {
+  tryCreateSlug,
+  toSlug,
+  isISODateString,
+  toISODateString,
+  normalizeTag,
+  buildTag,
+  buildTags,
+} from "./utils";
