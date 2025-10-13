@@ -10,7 +10,7 @@ const isExternal = entry.source === "zenn" || entry.source === "gist";
 const href = isExternal ? entry.url : `/knowledge/${entry.slug}`;
 ---
 
-<article class="hover:bg-main-25 rounded-md p-4 transition" aria-labelledby={`title-${entry.id}`}>
+<article class="hover:bg-main-25 rounded-md transition" aria-labelledby={`title-${entry.id}`}>
   <a
     href={href}
     class="focus:ring-purple block focus:ring-2 focus:outline-none"

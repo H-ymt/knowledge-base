@@ -60,8 +60,7 @@ src/
 │   │   └── cache.ts         # キャッシュ管理
 │   └── search.ts            # 検索ロジック
 ├── data/                    # 生成されたデータファイル
-│   ├── entries.json         # 記事データ
-│   └── tags.json            # タグデータ
+│   └── entries.json         # 記事データ
 └── assets/                  # スタイル・アセット
     └── app.css              # グローバルスタイル
 ```
@@ -101,9 +100,7 @@ export type KnowledgeEntry = {
 
 ### 検索・フィルタ機能
 
-- 少量データ → Astro 側でのフィルタリング
-- 多量データ → Fuse.js + Island Component でのクライアントサイド検索
-- URL クエリパラメータによる状態管理（`?q=react&tag=astro`）
+- 現在は実装していません（将来的に追加予定）
 
 ### SEO 対応
 

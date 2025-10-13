@@ -1,10 +1,10 @@
 import "dotenv/config";
+
 /**
  * データ取得メインスクリプト（雛形）。
  * - 目的: ビルド前に外部データを取得し、`src/data/*.json` に保存する。
  * - 現状: 依存モジュールのスタブと実行フローの骨組みのみ。実データ取得は未実装。
  */
-
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 
@@ -23,7 +23,6 @@ interface Env {
 
 interface OutputPaths {
   readonly entriesJson: string;
-  readonly tagsJson: string;
 }
 
 function readEnv(): Env {
@@ -38,7 +37,6 @@ function readEnv(): Env {
 function getOutputPaths(cwd: string): OutputPaths {
   return {
     entriesJson: resolve(cwd, "src/data/entries.json"),
-    tagsJson: resolve(cwd, "src/data/tags.json"),
   } as const;
 }
 
@@ -57,7 +55,7 @@ async function main(): Promise<void> {
   const args = parseArgs(process.argv.slice(2));
 
   // 雛形フェーズ: 出力先の存在だけ整える（空配列を確保）。
-  await Promise.all([ensureFile(out.entriesJson), ensureFile(out.tagsJson)]);
+  await ensureFile(out.entriesJson);
 
   log({ event: "start", source: args.source, force: args.force, limit: args.limit, since: args.since, out });
   if (!env.GITHUB_USERNAME && (args.source === "all" || args.source === "gist")) {
@@ -117,26 +115,13 @@ async function main(): Promise<void> {
 
   // slug 重複解消
   entries = ensureUniqueSlugs(entries);
-  // タグ集計
-  const tagSet = new Map<string, { raw: string; norm: string; count: number }>();
-  for (const e of entries) {
-    for (const t of e.tags) {
-      const cur = tagSet.get(t.norm);
-      if (cur) cur.count += 1;
-      else tagSet.set(t.norm, { raw: t.raw, norm: t.norm, count: 1 });
-    }
-  }
-  const tags = Array.from(tagSet.values())
-    .sort((a, b) => b.count - a.count || a.norm.localeCompare(b.norm))
-    .map(({ raw, norm }) => ({ raw, norm }));
 
   // entries の決定的ソート（publishedAt desc, id asc）
   entries.sort((a, b) => (a.publishedAt > b.publishedAt ? -1 : a.publishedAt < b.publishedAt ? 1 : a.id.localeCompare(b.id)));
 
   // 出力
   await writeFile(out.entriesJson, JSON.stringify(entries, null, 2) + "\n", "utf-8");
-  await writeFile(out.tagsJson, JSON.stringify(tags, null, 2) + "\n", "utf-8");
-  log({ event: "done", entries: entries.length, tags: tags.length });
+  log({ event: "done", entries: entries.length });
 }
 
 void main().catch((err) => {

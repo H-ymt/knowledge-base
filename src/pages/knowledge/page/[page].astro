@@ -2,7 +2,6 @@
 import Layout from "../../../layouts/Layout.astro";
 import entriesData from "@/data/entries.json";
 import type { KnowledgeEntry } from "@/lib/types";
-import Filters from "@/components/Filters.astro";
 import KnowledgeCard from "@/components/KnowledgeCard.astro";
 
 export interface Props {
@@ -12,7 +11,7 @@ export interface Props {
 }
 
 export async function getStaticPaths() {
-  const entries = entriesData as KnowledgeEntry[];
+  const entries = entriesData as unknown as KnowledgeEntry[];
   const pageSize = 20;
   const totalPages = Math.ceil(entries.length / pageSize);
   return Array.from({ length: totalPages - 1 }, (_, i) => {
@@ -35,8 +34,6 @@ const totalPages = Math.ceil(total / pageSize);
       <p class="text-main-body-lighter text-sm">{total} 件 / ページ {page} / {totalPages}</p>
     </header>
 
-    <Filters />
-
     <ul class="space-y-4">
       {
         items.map((e) => (
@@ -52,7 +49,6 @@ const totalPages = Math.ceil(total / pageSize);
         {
           page > 1 && (
             <a
-              data-keep-search="1"
               class="border-main-300 hover:bg-main-50 rounded border px-3 py-1"
               href={page === 2 ? "/knowledge" : `/knowledge/page/${page - 1}`}
             >
@@ -64,7 +60,7 @@ const totalPages = Math.ceil(total / pageSize);
       <div>
         {
           page < totalPages && (
-            <a data-keep-search="1" class="border-main-300 hover:bg-main-50 rounded border px-3 py-1" href={`/knowledge/page/${page + 1}`}>
+            <a class="border-main-300 hover:bg-main-50 rounded border px-3 py-1" href={`/knowledge/page/${page + 1}`}>
               次のページ →
             </a>
           )
@@ -72,18 +68,4 @@ const totalPages = Math.ceil(total / pageSize);
       </div>
     </nav>
   </section>
-
-  <script>
-    const qs = window.location.search;
-    if (qs) {
-      document.querySelectorAll('a[data-keep-search="1"]').forEach((a) => {
-        try {
-          const u = new URL(a.href, location.origin);
-          if (!u.search) u.search = qs;
-          else if (!u.search.includes(qs.slice(1))) u.search += (u.search ? "&" : "?") + qs.slice(1);
-          a.href = u.pathname + u.search;
-        } catch {}
-      });
-    }
-  </script>
 </Layout>

@@ -3,42 +3,22 @@ import Layout from "../../layouts/Layout.astro";
 import entriesData from "@/data/entries.json";
 import type { KnowledgeEntry } from "@/lib/types";
 import KnowledgeCard from "@/components/KnowledgeCard.astro";
-import Filters from "@/components/Filters.astro";
 
-const entries = entriesData as KnowledgeEntry[];
+const entries = entriesData as unknown as KnowledgeEntry[];
 const pageSize = 20;
-// URL クエリによる簡易フィルタ
-const u = new URL(Astro.url);
-const qTag = u.searchParams.get("tag");
-const qSource = u.searchParams.get("source");
-const q = (u.searchParams.get("q") ?? "").trim().toLowerCase();
-const search = u.search;
 
-let filtered = entries;
-if (qSource === "gist" || qSource === "zenn") {
-  filtered = filtered.filter((e) => e.source === qSource);
-}
-if (qTag) {
-  filtered = filtered.filter((e) => e.tags.some((t) => t.norm === qTag));
-}
-if (q) {
-  filtered = filtered.filter((e) => e.title.toLowerCase().includes(q) || (e.summary?.toLowerCase?.().includes(q) ?? false));
-}
-
-const pageEntries = filtered.slice(0, pageSize);
-const totalPages = Math.ceil(filtered.length / pageSize);
+const pageEntries = entries.slice(0, pageSize);
+const totalPages = Math.ceil(entries.length / pageSize);
 ---
 
 <Layout>
-  <section class="container mx-auto space-y-6 p-6">
+  <section class="mx-auto space-y-6 pt-16 pb-20">
     <header class="space-y-1">
       <h1 class="text-3xl">Knowledge</h1>
-      <p class="text-main-body-lighter text-sm">{filtered.length} 件</p>
+      <p class="text-main-body-lighter text-sm">{entries.length} 件</p>
     </header>
 
-    <Filters />
-
-    <ul class="space-y-4" aria-label="記事一覧">
+    <ul class="space-y-6 lg:space-y-10" aria-label="記事一覧">
       {
         pageEntries.map((e) => (
           <li>
@@ -52,28 +32,11 @@ const totalPages = Math.ceil(filtered.length / pageSize);
     {
       totalPages > 1 && (
         <nav class="flex items-center justify-end gap-2 text-sm" aria-label="ページネーション">
-          <a class="border-main-300 hover:bg-main-50 rounded border px-3 py-1" href={`/knowledge/page/2${search}`}>
+          <a class="border-main-300 hover:bg-main-50 rounded border px-3 py-1" href="/knowledge/page/2">
             次のページ →
           </a>
         </nav>
       )
     }
   </section>
-  <script
-    type="application/json"
-    id="kb-entries"
-    set:html={JSON.stringify(
-      entries.map((e) => ({
-        id: e.id,
-        source: e.source,
-        slug: e.slug,
-        title: e.title,
-        summary: e.summary,
-        url: e.url,
-        tags: e.tags,
-        publishedAt: e.publishedAt,
-      })),
-    )}
-  />
-  <script type="module" src="/src/components/search/client-search-fuse.js"></script>
 </Layout>
