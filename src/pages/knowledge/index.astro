@@ -5,7 +5,7 @@ import type { KnowledgeEntry } from "@/lib/types";
 import KnowledgeCard from "@/components/KnowledgeCard.astro";
 import Filters from "@/components/Filters.astro";
 
-const entries = (entriesData as KnowledgeEntry[]);
+const entries = entriesData as KnowledgeEntry[];
 const pageSize = 20;
 // URL クエリによる簡易フィルタ
 const u = new URL(Astro.url);
@@ -22,42 +22,58 @@ if (qTag) {
   filtered = filtered.filter((e) => e.tags.some((t) => t.norm === qTag));
 }
 if (q) {
-  filtered = filtered.filter((e) =>
-    e.title.toLowerCase().includes(q) ||
-    (e.summary?.toLowerCase?.().includes(q) ?? false)
-  );
+  filtered = filtered.filter((e) => e.title.toLowerCase().includes(q) || (e.summary?.toLowerCase?.().includes(q) ?? false));
 }
 
 const pageEntries = filtered.slice(0, pageSize);
 const totalPages = Math.ceil(filtered.length / pageSize);
-// tagsData は Filters 内で直接参照するため、このファイルでは未使用
 ---
 
 <Layout>
-  <section class="container mx-auto p-6 space-y-6">
+  <section class="container mx-auto space-y-6 p-6">
     <header class="space-y-1">
       <h1 class="text-3xl">Knowledge</h1>
-      <p class="text-sm text-main-body-lighter">{filtered.length} 件</p>
+      <p class="text-main-body-lighter text-sm">{filtered.length} 件</p>
     </header>
 
     <Filters />
 
     <ul class="space-y-4" aria-label="記事一覧">
-      {pageEntries.map((e) => (
-        <li>
-          <KnowledgeCard entry={e} />
-        </li>
-      ))}
-      {pageEntries.length === 0 && <li class="text-sm text-main-body-lighter">該当する記事がありません</li>}
+      {
+        pageEntries.map((e) => (
+          <li>
+            <KnowledgeCard entry={e} />
+          </li>
+        ))
+      }
+      {pageEntries.length === 0 && <li class="text-main-body-lighter text-sm">該当する記事がありません</li>}
     </ul>
 
-    {totalPages > 1 && (
-      <nav class="flex items-center justify-end gap-2 text-sm" aria-label="ページネーション">
-        <a class="px-3 py-1 rounded border border-main-300 hover:bg-main-50" href={`/knowledge/page/2${search}`}>次のページ →</a>
-      </nav>
-    )}
+    {
+      totalPages > 1 && (
+        <nav class="flex items-center justify-end gap-2 text-sm" aria-label="ページネーション">
+          <a class="border-main-300 hover:bg-main-50 rounded border px-3 py-1" href={`/knowledge/page/2${search}`}>
+            次のページ →
+          </a>
+        </nav>
+      )
+    }
   </section>
-  <script type="application/json" id="kb-entries">{JSON.stringify(entries.map((e) => ({ id: e.id, source: e.source, slug: e.slug, title: e.title, summary: e.summary, url: e.url, tags: e.tags, publishedAt: e.publishedAt })))}
-  </script>
+  <script
+    type="application/json"
+    id="kb-entries"
+    set:html={JSON.stringify(
+      entries.map((e) => ({
+        id: e.id,
+        source: e.source,
+        slug: e.slug,
+        title: e.title,
+        summary: e.summary,
+        url: e.url,
+        tags: e.tags,
+        publishedAt: e.publishedAt,
+      })),
+    )}
+  />
   <script type="module" src="/src/components/search/client-search-fuse.js"></script>
 </Layout>

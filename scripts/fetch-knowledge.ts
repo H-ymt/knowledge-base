@@ -1,10 +1,11 @@
+import "dotenv/config";
 /**
  * データ取得メインスクリプト（雛形）。
  * - 目的: ビルド前に外部データを取得し、`src/data/*.json` に保存する。
  * - 現状: 依存モジュールのスタブと実行フローの骨組みのみ。実データ取得は未実装。
  */
 
-import { mkdir,readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 
 import { normalizeGist, normalizeZenn } from "@/lib/adapters/normalize";
@@ -76,7 +77,7 @@ async function main(): Promise<void> {
         .catch((e) => {
           console.warn("[fetch-knowledge] gist skipped: %s", String(e));
           return [] as KnowledgeEntry[];
-        })
+        }),
     );
   }
   // Zenn
@@ -88,7 +89,7 @@ async function main(): Promise<void> {
         .catch((e) => {
           console.warn("[fetch-knowledge] zenn skipped: %s", String(e));
           return [] as KnowledgeEntry[];
-        })
+        }),
     );
   }
 
@@ -113,7 +114,7 @@ async function main(): Promise<void> {
     }
   }
   const tags = Array.from(tagSet.values())
-    .sort((a, b) => (b.count - a.count) || a.norm.localeCompare(b.norm))
+    .sort((a, b) => b.count - a.count || a.norm.localeCompare(b.norm))
     .map(({ raw, norm }) => ({ raw, norm }));
 
   // entries の決定的ソート（publishedAt desc, id asc）

@@ -1,1 +1,26 @@
-[]
+[
+  {
+    "raw": "gist",
+    "norm": "gist"
+  },
+  {
+    "raw": "JavaScript",
+    "norm": "javascript"
+  },
+  {
+    "raw": "HTML",
+    "norm": "html"
+  },
+  {
+    "raw": "CSS",
+    "norm": "css"
+  },
+  {
+    "raw": "Markdown",
+    "norm": "markdown"
+  },
+  {
+    "raw": "SCSS",
+    "norm": "scss"
+  }
+]
