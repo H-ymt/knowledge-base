@@ -34,6 +34,38 @@ export function toSlug(input: string): Slug {
   return s;
 }
 
+/** スラッグを最大長までトリム（語境界としてハイフンを優先）。 */
+export function truncateSlug(slug: Slug, maxLength: number): Slug {
+  if (maxLength <= 0) throw new Error("truncateSlug: maxLength > 0 が必要です");
+  if (slug.length <= maxLength) return slug;
+  // 末尾側を優先的に切らず、語の途中で切れないように制御
+  const cut = slug.slice(0, maxLength);
+  const lastDash = cut.lastIndexOf("-");
+  const trimmed = (lastDash > 0 ? cut.slice(0, lastDash) : cut).replace(/-+$/g, "");
+  return (trimmed || cut) as Slug;
+}
+
+/**
+ * タイトルと一意ヒント（ID 等）からスラッグ生成。
+ * - タイトル由来のスラッグを基準に、必要に応じて `-hint` を付与
+ * - `maxLength` を超える場合は語境界でトリムして安定化
+ */
+export function toSlugWithHint(
+  title: string,
+  uniqueHint: string,
+  options?: { readonly maxLength?: number; readonly delimiter?: string }
+): Slug {
+  const max = options?.maxLength ?? 80;
+  const delimiter = options?.delimiter ?? "-";
+  const t = tryCreateSlug(title);
+  const h = tryCreateSlug(uniqueHint);
+  if (!t && !h) throw new Error("toSlugWithHint: スラッグを生成できません");
+  const base = t ?? (h as Slug);
+  const suffix = h && (!t || !base.endsWith(h)) ? (delimiter + h) : "";
+  const composed = (base + suffix) as Slug;
+  return truncateSlug(composed, max);
+}
+
 // ---- ISO Date ----
 
 /** ISO 8601 の厳格判定（YYYY-MM-DDTHH:mm:ss.sssZ 形式）。 */
@@ -54,9 +86,14 @@ export function toISODateString(input: string | number | Date): ISODateString | 
 
 /** タグの正規化（小文字・全角半角統一・空白と区切りのハイフン化）。 */
 export function normalizeTag(raw: string): string {
-  return raw
+  // ラテン系の合成分解で付加記号を除去（日本語の濁点等は影響しない）
+  const diacriticsRemoved = raw
     .trim()
-    .normalize("NFKC")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .normalize("NFKC");
+  return diacriticsRemoved
+    .trim()
     .toLowerCase()
     .replace(/[\s_]+/g, "-")
     .replace(/[^a-z0-9\-]+/g, "-")
@@ -83,4 +120,3 @@ export function buildTags(inputs: ReadonlyArray<string>): ReadonlyArray<Tag> {
   }
   return out;
 }
-
