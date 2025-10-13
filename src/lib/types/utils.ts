@@ -53,7 +53,7 @@ export function truncateSlug(slug: Slug, maxLength: number): Slug {
 export function toSlugWithHint(
   title: string,
   uniqueHint: string,
-  options?: { readonly maxLength?: number; readonly delimiter?: string }
+  options?: { readonly maxLength?: number; readonly delimiter?: string },
 ): Slug {
   const max = options?.maxLength ?? 80;
   const delimiter = options?.delimiter ?? "-";
@@ -61,7 +61,7 @@ export function toSlugWithHint(
   const h = tryCreateSlug(uniqueHint);
   if (!t && !h) throw new Error("toSlugWithHint: スラッグを生成できません");
   const base = t ?? (h as Slug);
-  const suffix = h && (!t || !base.endsWith(h)) ? (delimiter + h) : "";
+  const suffix = h && (!t || !base.endsWith(h)) ? delimiter + h : "";
   const composed = (base + suffix) as Slug;
   return truncateSlug(composed, max);
 }

@@ -31,34 +31,26 @@ const base = cn(
   "inline-flex items-center justify-center select-none",
   "rounded-md font-medium transition-colors",
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-  "disabled:opacity-60 disabled:pointer-events-none"
+  "disabled:opacity-60 disabled:pointer-events-none",
 );
 
 const byVariant: Record<ButtonVariant, string> = {
   primary: cn(
     "text-white",
     "bg-[--color-purple] hover:bg-[--color-purple]",
-    "focus-visible:ring-[--color-purple] ring-offset-[--color-main-50]"
+    "focus-visible:ring-[--color-purple] ring-offset-[--color-main-50]",
   ),
-  secondary: cn(
-    "text-main-body",
-    "bg-main-50 hover:bg-main-100",
-    "focus-visible:ring-[--color-main-400] ring-offset-[--color-main-50]"
-  ),
+  secondary: cn("text-main-body", "bg-main-50 hover:bg-main-100", "focus-visible:ring-[--color-main-400] ring-offset-[--color-main-50]"),
   outline: cn(
     "text-main-body",
     "border border-[--color-main-300] bg-transparent hover:bg-main-50",
-    "focus-visible:ring-[--color-main-400] ring-offset-[--color-main-50]"
+    "focus-visible:ring-[--color-main-400] ring-offset-[--color-main-50]",
   ),
-  ghost: cn(
-    "text-main-body",
-    "bg-transparent hover:bg-main-50",
-    "focus-visible:ring-[--color-main-300] ring-offset-[--color-main-50]"
-  ),
+  ghost: cn("text-main-body", "bg-transparent hover:bg-main-50", "focus-visible:ring-[--color-main-300] ring-offset-[--color-main-50]"),
   link: cn(
     "bg-transparent p-0 h-auto",
     "text-[--color-link-text] underline-offset-4 hover:underline",
-    "focus-visible:ring-[--color-purple] ring-offset-[--color-main-50]"
+    "focus-visible:ring-[--color-purple] ring-offset-[--color-main-50]",
   ),
 };
 
@@ -71,20 +63,21 @@ const bySize: Record<ButtonSize, string> = {
 const classes = cn(base, byVariant[variant], bySize[size], className);
 ---
 
-{href ? (
-  <a
-    href={href}
-    class={classes}
-    aria-disabled={disabled ? "true" : undefined}
-    tabindex={disabled ? -1 : undefined}
-    aria-label={ariaLabel}
-    {...rest}
-  >
-    {children}
-  </a>
-) : (
-  <button type={type} class={classes} disabled={disabled} aria-label={ariaLabel} {...rest}>
-    {children}
-  </button>
-)}
-
+{
+  href ? (
+    <a
+      href={href}
+      class={classes}
+      aria-disabled={disabled ? "true" : undefined}
+      tabindex={disabled ? -1 : undefined}
+      aria-label={ariaLabel}
+      {...rest}
+    >
+      {children}
+    </a>
+  ) : (
+    <button type={type} class={classes} disabled={disabled} aria-label={ariaLabel} {...rest}>
+      {children}
+    </button>
+  )
+}

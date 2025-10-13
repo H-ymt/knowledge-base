@@ -12,7 +12,7 @@ export interface Props {
 }
 
 export async function getStaticPaths() {
-  const entries = (entriesData as KnowledgeEntry[]);
+  const entries = entriesData as KnowledgeEntry[];
   const pageSize = 20;
   const totalPages = Math.ceil(entries.length / pageSize);
   return Array.from({ length: totalPages - 1 }, (_, i) => {
@@ -29,28 +29,46 @@ const totalPages = Math.ceil(total / pageSize);
 ---
 
 <Layout>
-  <section class="container mx-auto p-6 space-y-6">
+  <section class="container mx-auto space-y-6 p-6">
     <header class="space-y-1">
       <h1 class="text-3xl">Knowledge</h1>
-      <p class="text-sm text-main-body-lighter">{total} 件 / ページ {page} / {totalPages}</p>
+      <p class="text-main-body-lighter text-sm">{total} 件 / ページ {page} / {totalPages}</p>
     </header>
 
     <Filters />
 
     <ul class="space-y-4">
-      {items.map((e) => (
-        <li>
-          <KnowledgeCard entry={e} />
-        </li>
-      ))}
+      {
+        items.map((e) => (
+          <li>
+            <KnowledgeCard entry={e} />
+          </li>
+        ))
+      }
     </ul>
 
     <nav class="flex items-center justify-between text-sm" aria-label="ページネーション">
       <div>
-        {page > 1 && (<a data-keep-search="1" class="px-3 py-1 rounded border border-main-300 hover:bg-main-50" href={page === 2 ? "/knowledge" : `/knowledge/page/${page - 1}`}>← 前のページ</a>)}
+        {
+          page > 1 && (
+            <a
+              data-keep-search="1"
+              class="border-main-300 hover:bg-main-50 rounded border px-3 py-1"
+              href={page === 2 ? "/knowledge" : `/knowledge/page/${page - 1}`}
+            >
+              ← 前のページ
+            </a>
+          )
+        }
       </div>
       <div>
-        {page < totalPages && (<a data-keep-search="1" class="px-3 py-1 rounded border border-main-300 hover:bg-main-50" href={`/knowledge/page/${page + 1}`}>次のページ →</a>)}
+        {
+          page < totalPages && (
+            <a data-keep-search="1" class="border-main-300 hover:bg-main-50 rounded border px-3 py-1" href={`/knowledge/page/${page + 1}`}>
+              次のページ →
+            </a>
+          )
+        }
       </div>
     </nav>
   </section>
@@ -62,7 +80,7 @@ const totalPages = Math.ceil(total / pageSize);
         try {
           const u = new URL(a.href, location.origin);
           if (!u.search) u.search = qs;
-          else if (!u.search.includes(qs.slice(1))) u.search += (u.search ? '&' : '?') + qs.slice(1);
+          else if (!u.search.includes(qs.slice(1))) u.search += (u.search ? "&" : "?") + qs.slice(1);
           a.href = u.pathname + u.search;
         } catch {}
       });

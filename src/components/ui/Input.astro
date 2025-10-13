@@ -35,7 +35,7 @@ const base = cn(
   "border border-[--color-main-300] bg-white text-main-body",
   "placeholder:text-main-body-lighter",
   "focus:outline-none focus:ring-2 focus:ring-[--color-purple] focus:border-transparent",
-  "disabled:bg-main-50 disabled:text-main-700 disabled:cursor-not-allowed"
+  "disabled:bg-main-50 disabled:text-main-700 disabled:cursor-not-allowed",
 );
 
 const bySize: Record<InputSize, string> = {
@@ -59,4 +59,3 @@ const classes = cn(base, bySize[size], invalid && "ring-2 ring-[--color-danger] 
   class={classes}
   {...rest}
 />
-

@@ -40,7 +40,7 @@ const base = cn(
   "w-full rounded-md",
   "border border-[--color-main-300] bg-white text-main-body",
   "focus:outline-none focus:ring-2 focus:ring-[--color-purple] focus:border-transparent",
-  "disabled:bg-main-50 disabled:text-main-700 disabled:cursor-not-allowed"
+  "disabled:bg-main-50 disabled:text-main-700 disabled:cursor-not-allowed",
 );
 
 const bySize: Record<SelectSize, string> = {
@@ -62,11 +62,18 @@ const classes = cn(base, bySize[size], invalid && "ring-2 ring-[--color-danger] 
   class={classes}
   {...rest}
 >
-  {placeholder && <option value="" disabled selected={!value}>{placeholder}</option>}
-  {options.map((opt) => (
-    <option value={opt.value} selected={value === opt.value} disabled={opt.disabled}>
-      {opt.label}
-    </option>
-  ))}
+  {
+    placeholder && (
+      <option value="" disabled selected={!value}>
+        {placeholder}
+      </option>
+    )
+  }
+  {
+    options.map((opt) => (
+      <option value={opt.value} selected={value === opt.value} disabled={opt.disabled}>
+        {opt.label}
+      </option>
+    ))
+  }
 </select>
-

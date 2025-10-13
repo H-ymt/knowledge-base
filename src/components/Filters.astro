@@ -5,7 +5,7 @@ import Button from "@/components/ui/Button.astro";
 import Select from "@/components/ui/Select.astro";
 import Input from "@/components/ui/Input.astro";
 
-const allTags = (tagsData as Tag[]);
+const allTags = tagsData as Tag[];
 const url = new URL(Astro.url);
 const currentSource = url.searchParams.get("source"); // gist|zenn
 const currentTag = url.searchParams.get("tag");
@@ -22,14 +22,12 @@ function linkWith(next: Record<string, string | null>): string {
 }
 ---
 
-<form class="flex flex-wrap gap-3 items-center" aria-label="フィルタ" method="get" action={new URL(Astro.url).pathname}>
+<form class="flex flex-wrap items-center gap-3" aria-label="フィルタ" method="get" action={new URL(Astro.url).pathname}>
   {currentSource && <input type="hidden" name="source" value={currentSource} />}
   {currentTag && <input type="hidden" name="tag" value={currentTag} />}
   <fieldset class="flex items-center gap-2">
     <legend class="sr-only">ソース</legend>
-    <Button href={linkWith({ source: null })} variant={currentSource ? "outline" : "primary"} size="sm" ariaLabel="すべて">
-      All
-    </Button>
+    <Button href={linkWith({ source: null })} variant={currentSource ? "outline" : "primary"} size="sm" ariaLabel="すべて"> All </Button>
     <Button href={linkWith({ source: "gist" })} variant={currentSource === "gist" ? "primary" : "outline"} size="sm" ariaLabel="Gist のみ">
       Gist
     </Button>
@@ -38,7 +36,7 @@ function linkWith(next: Record<string, string | null>): string {
     </Button>
   </fieldset>
 
-  <label class="text-sm flex items-center gap-2">
+  <label class="flex items-center gap-2 text-sm">
     <span>タグ</span>
     <Select
       name="tag"
@@ -49,17 +47,19 @@ function linkWith(next: Record<string, string | null>): string {
     />
   </label>
 
-  <label class="text-sm flex items-center gap-2 ml-auto">
+  <label class="ml-auto flex items-center gap-2 text-sm">
     <span>検索</span>
     <Input name="q" size="sm" value={currentQ ?? ""} placeholder="タイトル/要約" />
     <Button type="submit" variant="secondary" size="sm">検索</Button>
   </label>
 
-  {hasFilters && (
-    <div class="ml-2">
-      <Button href={new URL(Astro.url).pathname} variant="ghost" size="sm" ariaLabel="フィルタをクリア">
-        クリア
-      </Button>
-    </div>
-  )}
+  {
+    hasFilters && (
+      <div class="ml-2">
+        <Button href={new URL(Astro.url).pathname} variant="ghost" size="sm" ariaLabel="フィルタをクリア">
+          クリア
+        </Button>
+      </div>
+    )
+  }
 </form>

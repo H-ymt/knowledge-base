@@ -1,4 +1,4 @@
-import Fuse from 'fuse.js';
+import Fuse from "fuse.js";
 
 function debounce(fn, ms) {
   let t;
@@ -26,14 +26,17 @@ function renderList(root, items, page, pageSize) {
                   <p class="text-sm mb-2 text-main-body-lighter">${new Date(e.publishedAt).toLocaleDateString("ja-JP")}</p>
                   <p class="text-sm line-clamp-2">${e.summary ?? ""}</p>
                   <div class="mt-2 flex flex-wrap gap-2">
-                    ${(e.tags || []).slice(0, 8).map((t) => `<span class="text-xs px-2 py-0.5 rounded-full bg-main-50 text-main-700">${t.norm}</span>`).join("")}
+                    ${(e.tags || [])
+                      .slice(0, 8)
+                      .map((t) => `<span class="text-xs px-2 py-0.5 rounded-full bg-main-50 text-main-700">${t.norm}</span>`)
+                      .join("")}
                   </div>
                 </a>
                 <p class="mt-2 text-xs">
                   <a class="text-link hover:underline" href="${e.url}" target="_blank" rel="noopener">ソースを開く ↗</a>
                 </p>
               </article>
-            </li>`
+            </li>`,
           )
           .join("")}
       </ul>
@@ -46,18 +49,18 @@ function renderList(root, items, page, pageSize) {
 
   const prev = root.querySelector('[data-act="prev"]');
   const next = root.querySelector('[data-act="next"]');
-  if (prev) prev.addEventListener('click', () => root.dispatchEvent(new CustomEvent('kb:page', { detail: { page: page - 1 } })));
-  if (next) next.addEventListener('click', () => root.dispatchEvent(new CustomEvent('kb:page', { detail: { page: page + 1 } })));
+  if (prev) prev.addEventListener("click", () => root.dispatchEvent(new CustomEvent("kb:page", { detail: { page: page - 1 } })));
+  if (next) next.addEventListener("click", () => root.dispatchEvent(new CustomEvent("kb:page", { detail: { page: page + 1 } })));
 }
 
 export function setupClientSearchFuse() {
-  const jsonEl = document.getElementById('kb-entries');
+  const jsonEl = document.getElementById("kb-entries");
   if (!jsonEl) return;
-  const all = JSON.parse(jsonEl.textContent || '[]');
+  const all = JSON.parse(jsonEl.textContent || "[]");
   const input = document.querySelector('form[aria-label="フィルタ"] input[name="q"]');
   const serverList = document.querySelector('ul[aria-label="記事一覧"]');
   const countLabel = serverList?.previousElementSibling; // p with counts
-  const root = document.getElementById('client-search-root');
+  const root = document.getElementById("client-search-root");
   if (!input || !root || !serverList) return;
 
   const fuse = new Fuse(all, {
@@ -67,9 +70,9 @@ export function setupClientSearchFuse() {
     ignoreLocation: true,
     minMatchCharLength: 2,
     keys: [
-      { name: 'title', weight: 0.6 },
-      { name: 'summary', weight: 0.3 },
-      { name: 'tags.norm', weight: 0.1 },
+      { name: "title", weight: 0.6 },
+      { name: "summary", weight: 0.3 },
+      { name: "tags.norm", weight: 0.1 },
     ],
   });
 
@@ -78,14 +81,15 @@ export function setupClientSearchFuse() {
   let filtered = [];
 
   function apply(query) {
-    const q = (query || '').trim();
+    const q = (query || "").trim();
     if (!q) {
       root.hidden = true;
       serverList.hidden = false;
-      if (countLabel && countLabel.matches('p')) countLabel.textContent = `${serverList.querySelectorAll('li').length} 件`;
+      if (countLabel && countLabel.matches("p")) countLabel.textContent = `${serverList.querySelectorAll("li").length} 件`;
       return;
     }
-    filtered = fuse.search(q)
+    filtered = fuse
+      .search(q)
       .sort((a, b) => (a.score ?? 1) - (b.score ?? 1))
       .map((x) => x.item);
     currentPage = 1;
@@ -95,8 +99,8 @@ export function setupClientSearchFuse() {
   }
 
   const onInput = debounce(() => apply(input.value), 200);
-  input.addEventListener('input', onInput);
-  root.addEventListener('kb:page', (ev) => {
+  input.addEventListener("input", onInput);
+  root.addEventListener("kb:page", (ev) => {
     currentPage = Math.max(1, ev.detail.page);
     renderList(root, filtered, currentPage, pageSize);
   });
@@ -104,7 +108,6 @@ export function setupClientSearchFuse() {
   if (input.value) apply(input.value);
 }
 
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   queueMicrotask(setupClientSearchFuse);
 }
-
