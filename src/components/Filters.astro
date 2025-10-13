@@ -3,11 +3,13 @@ import type { Tag } from "@/lib/types";
 import tagsData from "@/data/tags.json";
 import Button from "@/components/ui/Button.astro";
 import Select from "@/components/ui/Select.astro";
+import Input from "@/components/ui/Input.astro";
 
 const allTags = (tagsData as Tag[]);
 const url = new URL(Astro.url);
 const currentSource = url.searchParams.get("source"); // gist|zenn
 const currentTag = url.searchParams.get("tag");
+const currentQ = url.searchParams.get("q");
 
 function linkWith(next: Record<string, string | null>): string {
   const u = new URL(Astro.url);
@@ -19,7 +21,9 @@ function linkWith(next: Record<string, string | null>): string {
 }
 ---
 
-<form class="flex flex-wrap gap-3 items-center" aria-label="フィルタ">
+<form class="flex flex-wrap gap-3 items-center" aria-label="フィルタ" method="get" action={new URL(Astro.url).pathname}>
+  {currentSource && <input type="hidden" name="source" value={currentSource} />}
+  {currentTag && <input type="hidden" name="tag" value={currentTag} />}
   <fieldset class="flex items-center gap-2">
     <legend class="sr-only">ソース</legend>
     <Button href={linkWith({ source: null })} variant={currentSource ? "outline" : "primary"} size="sm" ariaLabel="すべて">
@@ -42,5 +46,11 @@ function linkWith(next: Record<string, string | null>): string {
       options={[{ value: "", label: "すべて" }, ...allTags.map((t) => ({ value: t.norm, label: t.norm }))]}
       on:change={(e) => (location.href = linkWith({ tag: (e.target as HTMLSelectElement).value || null }))}
     />
+  </label>
+
+  <label class="text-sm flex items-center gap-2 ml-auto">
+    <span>検索</span>
+    <Input name="q" size="sm" value={currentQ ?? ""} placeholder="タイトル/要約" />
+    <Button type="submit" variant="secondary" size="sm">検索</Button>
   </label>
 </form>

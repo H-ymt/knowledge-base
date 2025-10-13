@@ -12,6 +12,7 @@ const pageSize = 20;
 const u = new URL(Astro.url);
 const qTag = u.searchParams.get("tag");
 const qSource = u.searchParams.get("source");
+const q = (u.searchParams.get("q") ?? "").trim().toLowerCase();
 
 let filtered = entries;
 if (qSource === "gist" || qSource === "zenn") {
@@ -19,6 +20,12 @@ if (qSource === "gist" || qSource === "zenn") {
 }
 if (qTag) {
   filtered = filtered.filter((e) => e.tags.some((t) => t.norm === qTag));
+}
+if (q) {
+  filtered = filtered.filter((e) =>
+    e.title.toLowerCase().includes(q) ||
+    (e.summary?.toLowerCase?.().includes(q) ?? false)
+  );
 }
 
 const pageEntries = filtered.slice(0, pageSize);
@@ -30,7 +37,7 @@ const allTags = (tagsData as Tag[]);
   <section class="container mx-auto p-6 space-y-6">
     <header class="space-y-1">
       <h1 class="text-3xl">Knowledge</h1>
-      <p class="text-sm text-main-body-lighter">{entries.length} 件</p>
+      <p class="text-sm text-main-body-lighter">{filtered.length} 件</p>
     </header>
 
     <Filters />
