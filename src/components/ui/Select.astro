@@ -1,0 +1,72 @@
+---
+import { cn } from "@/lib/ui/cn";
+
+export type SelectSize = "sm" | "md" | "lg";
+
+export interface Option {
+  readonly value: string;
+  readonly label: string;
+  readonly disabled?: boolean;
+}
+
+export interface Props {
+  readonly id?: string;
+  readonly name?: string;
+  readonly value?: string;
+  readonly placeholder?: string;
+  readonly options: ReadonlyArray<Option>;
+  readonly disabled?: boolean;
+  readonly required?: boolean;
+  readonly invalid?: boolean;
+  readonly size?: SelectSize;
+  readonly class?: string;
+}
+
+const {
+  id,
+  name,
+  value,
+  placeholder,
+  options,
+  disabled = false,
+  required = false,
+  invalid = false,
+  size = "md",
+  class: className,
+  ...rest
+} = Astro.props as Props;
+
+const base = cn(
+  "w-full rounded-md",
+  "border border-[--color-main-300] bg-white text-main-body",
+  "focus:outline-none focus:ring-2 focus:ring-[--color-purple] focus:border-transparent",
+  "disabled:bg-main-50 disabled:text-main-700 disabled:cursor-not-allowed"
+);
+
+const bySize: Record<SelectSize, string> = {
+  sm: "h-8 px-2 text-sm",
+  md: "h-10 px-3 text-sm",
+  lg: "h-12 px-4 text-base",
+};
+
+const classes = cn(base, bySize[size], invalid && "ring-2 ring-[--color-danger] border-transparent", className);
+---
+
+<select
+  id={id}
+  name={name}
+  value={value}
+  disabled={disabled}
+  required={required}
+  aria-invalid={invalid ? "true" : undefined}
+  class={classes}
+  {...rest}
+>
+  {placeholder && <option value="" disabled selected={!value}>{placeholder}</option>}
+  {options.map((opt) => (
+    <option value={opt.value} selected={value === opt.value} disabled={opt.disabled}>
+      {opt.label}
+    </option>
+  ))}
+</select>
+
