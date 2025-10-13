@@ -1,67 +1,29 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import entriesData from "@/data/entries.json";
-import type { KnowledgeEntry, Tag } from "@/lib/types";
-import TagList from "@/components/TagList.astro";
+import type { KnowledgeEntry } from "@/lib/types";
 
 export async function getStaticPaths() {
-  const entries = (entriesData as KnowledgeEntry[]);
+  const entries = entriesData as KnowledgeEntry[];
   return entries.map((e) => ({ params: { slug: String(e.slug) }, props: { entry: e, entries } }));
 }
 
-const { entry, entries } = Astro.props as { entry: KnowledgeEntry; entries: KnowledgeEntry[] };
-
-function relatedOf(all: KnowledgeEntry[], target: KnowledgeEntry): KnowledgeEntry[] {
-  const tagSet = new Set(target.tags.map((t) => t.norm));
-  return all
-    .filter((e) => e.id !== target.id)
-    .map((e) => ({ e, score: e.tags.reduce((acc, t) => acc + (tagSet.has(t.norm) ? 1 : 0), 0) }))
-    .filter((x) => x.score > 0)
-    .sort((a, b) => (b.score - a.score) || (a.e.publishedAt > b.e.publishedAt ? -1 : 1))
-    .slice(0, 5)
-    .map((x) => x.e);
-}
-
-const related = relatedOf(entries, entry);
+const { entry } = Astro.props as { entry: KnowledgeEntry };
 ---
 
 <Layout>
-  <article class="container mx-auto p-6 space-y-6">
-    <nav class="text-sm">
-      <a href="/knowledge" class="text-link hover:underline">← 一覧へ戻る</a>
-    </nav>
-
-    <header class="space-y-2">
-      <h1 class="text-3xl">{entry.title}</h1>
-      <p class="text-sm text-main-body-lighter">
-        公開: {new Date(entry.publishedAt).toLocaleString("ja-JP")} {entry.updatedAt && <> / 更新: {new Date(entry.updatedAt).toLocaleString("ja-JP")}</>}
-      </p>
-      <TagList tags={entry.tags as ReadonlyArray<Tag>} />
-    </header>
-
-    <section class="prose max-w-none">
-      {entry.contentHtml ? (
-        <Fragment set:html={entry.contentHtml} />
-      ) : (
-        <p class="text-main-body-lighter">本文は外部でご覧ください。</p>
-      )}
-      <p class="mt-4">
-        <a href={entry.url} target="_blank" rel="noopener" class="text-link hover:underline">ソースを開く ↗</a>
-      </p>
-    </section>
-
-    {related.length > 0 && (
-      <aside class="space-y-3">
-        <h2 class="text-xl">関連</h2>
-        <ul class="space-y-2">
-          {related.map((e) => (
-            <li>
-              <a href={`/knowledge/${e.slug}`} class="hover:underline">{e.title}</a>
-              <span class="text-xs text-main-body-lighter ml-2">{new Date(e.publishedAt).toLocaleDateString("ja-JP")}</span>
-            </li>
-          ))}
-        </ul>
-      </aside>
-    )}
+  <meta http-equiv="refresh" content={`0;url=${entry.url}`} />
+  <article class="container mx-auto space-y-4 p-6">
+    <h1 class="text-2xl">外部ページへ移動します…</h1>
+    <p class="text-main-body-lighter text-sm">自動的に移動しない場合は、以下のリンクをクリックしてください。</p>
+    <p>
+      <a href={entry.url} target="_blank" rel="noopener" class="text-link hover:underline">{entry.title} ↗</a>
+    </p>
+    <p class="text-sm">
+      <a href="/knowledge" class="hover:underline">← 一覧へ戻る</a>
+    </p>
+    <noscript>
+      <p class="text-main-body-lighter text-sm">JavaScript が無効です。上のリンクから外部ページを開いてください。</p>
+    </noscript>
   </article>
 </Layout>
