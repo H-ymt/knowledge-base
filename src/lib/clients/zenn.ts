@@ -31,7 +31,13 @@ export function createZennClient(config: ZennClientConfig = {}): ZennClient {
         if (res.status === 304) {
           return { title: `zenn:${user}:${kind}`, link: url.toString(), items: [] };
         }
-        if (!res.ok) throw new Error(`ZennClient: HTTP ${res.status} (${kind})`);
+        if (!res.ok) {
+          // スクラップ未利用ユーザーは 404 の可能性があるため、空配列で継続
+          if (res.status === 404 && kind === "scraps") {
+            return { title: `zenn:${user}:${kind}`, link: url.toString(), items: [] };
+          }
+          throw new Error(`ZennClient: HTTP ${res.status} (${kind})`);
+        }
         const etag = res.headers.get("etag");
         if (etag) await setETag(etagKey, etag);
         const xml = await res.text();

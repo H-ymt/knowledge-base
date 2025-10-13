@@ -96,6 +96,19 @@ async function main(): Promise<void> {
   const lists = await Promise.all(tasks);
   let entries = lists.flat();
 
+  // すべて空（304や404の結果）なら、既存 entries.json を保持して上書きしない
+  if (entries.length === 0) {
+    try {
+      const prevRaw = await readFile(out.entriesJson, "utf-8");
+      const prev: unknown = JSON.parse(prevRaw);
+      if (Array.isArray(prev) && prev.length > 0) {
+        entries = prev as KnowledgeEntry[];
+      }
+    } catch {
+      // 既存が無ければそのまま空で進む
+    }
+  }
+
   // since フィルタ
   if (args.since) {
     const sinceIso = toSinceIso(args.since);
