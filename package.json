@@ -7,7 +7,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "format": "prettier --write ./src/**/*.{astro,js,ts,css,json,md}"
+    "format": "prettier --write ./src"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.2.8",
