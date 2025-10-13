@@ -1,6 +1,6 @@
 /** Zenn RSS クライアント。 */
-import type { ZennFeed, ZennFeedItem } from "@/lib/types";
 import { getETag, setETag } from "@/lib/adapters/cache";
+import type { ZennFeed, ZennFeedItem } from "@/lib/types";
 
 export interface ZennClientConfig {
   readonly user?: string;

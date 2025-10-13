@@ -4,25 +4,26 @@
  * - 現状: 依存モジュールのスタブと実行フローの骨組みのみ。実データ取得は未実装。
  */
 
-import { readFile, writeFile, mkdir } from "node:fs/promises";
+import { mkdir,readFile, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
+
+import { normalizeGist, normalizeZenn } from "@/lib/adapters/normalize";
 import { createGistClient } from "@/lib/clients/gist";
 import { createZennClient } from "@/lib/clients/zenn";
-import { normalizeGist, normalizeZenn } from "@/lib/adapters/normalize";
 import type { KnowledgeEntry } from "@/lib/types";
 import { isISODateString } from "@/lib/types";
 
-type Env = {
+interface Env {
   readonly GITHUB_USERNAME?: string;
   readonly GITHUB_TOKEN?: string;
   readonly ZENN_USER?: string;
   readonly SITE_URL?: string;
-};
+}
 
-type OutputPaths = {
+interface OutputPaths {
   readonly entriesJson: string;
   readonly tagsJson: string;
-};
+}
 
 function readEnv(): Env {
   return {

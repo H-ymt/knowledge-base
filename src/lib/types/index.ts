@@ -65,13 +65,13 @@ export interface ZennFeed {
 }
 
 // Re-exports for convenience
-export type { Slug, ISODateString } from "./utils";
+export type { ISODateString,Slug } from "./utils";
 export {
-  tryCreateSlug,
-  toSlug,
-  isISODateString,
-  toISODateString,
-  normalizeTag,
   buildTag,
   buildTags,
+  isISODateString,
+  normalizeTag,
+  toISODateString,
+  toSlug,
+  tryCreateSlug,
 } from "./utils";

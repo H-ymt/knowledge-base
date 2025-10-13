@@ -2,8 +2,8 @@
  * GitHub Gist API クライアント（スタブ）。
  * TODO: API 呼び出し実装と ETag 差分取得。
  */
-import type { GistApiItem } from "@/lib/types";
 import { getETag, setETag } from "@/lib/adapters/cache";
+import type { GistApiItem } from "@/lib/types";
 
 export interface GistClientConfig {
   readonly username?: string;
