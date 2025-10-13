@@ -82,7 +82,7 @@ async function main(): Promise<void> {
   }
   // Zenn
   if (env.ZENN_USER && (args.source === "all" || args.source === "zenn")) {
-    const zenn = createZennClient({ user: env.ZENN_USER });
+    const zenn = createZennClient({ user: env.ZENN_USER, includeScraps: true });
     tasks.push(
       timeIt("zenn", () => zenn.fetchFeed({ force: args.force }))
         .then((feed) => normalizeZenn(feed))
