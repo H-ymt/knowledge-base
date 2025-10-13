@@ -1,1 +1,48 @@
 @import "tailwindcss";
+
+@theme {
+  --font-base: Inter, Arial, Hiragino Kaku Gothic ProN, Hiragino Sans, Noto Sans JP, sans-serif, Segoe UI Emoji, Segoe UI Symbol;
+
+  --color-placeholder: #93a0a7;
+  --color-main-body: #080d12cc;
+  --color-main-body-lighter: #080d1299;
+  --color-main-bg: #fff;
+
+  --color-main-25: #fbfdff;
+  --color-main-50: #f6f9fb;
+  --color-main-75: #f3f8fb;
+  --color-main-100: #f1f6f9;
+  --color-main-200: #e9eef1;
+  --color-main-300: #e2eaee;
+  --color-main-400: #cad3d8;
+  --color-main-500: #bac1c5;
+  --color-main-600: #7f8b91;
+  --color-main-700: #6f767a;
+  --color-main-800: #5f6a6f;
+  --color-main-900: #4b5256;
+
+  --color-primary: #24afff;
+  --color-primary-dark: #09a5ff;
+  --color-primary-darker: #008cf0;
+  --color-primary-lighter: #3bb7ff;
+  --color-primary-bg: #ebf6ff;
+  --color-primary-bg-lighter: #f3f9fe;
+  --color-link-text: #0089f2;
+  --color-danger: #ff6161;
+  --color-danger-darker: #ff4d4d;
+  --color-orange: #ffa861;
+  --color-purple: #6f8cff;
+}
+
+body {
+  @apply bg-primary-bg text-main-body-lighter font-base;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  @apply text-main-body font-bold;
+}
