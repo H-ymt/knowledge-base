@@ -1,7 +1,8 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import entriesData from "@/data/entries.json";
-import type { KnowledgeEntry } from "@/lib/types";
+import type { KnowledgeEntry, Tag } from "@/lib/types";
+import TagList from "@/components/TagList.astro";
 
 export async function getStaticPaths() {
   const entries = (entriesData as KnowledgeEntry[]);
@@ -35,11 +36,7 @@ const related = relatedOf(entries, entry);
       <p class="text-sm text-main-body-lighter">
         公開: {new Date(entry.publishedAt).toLocaleString("ja-JP")} {entry.updatedAt && <> / 更新: {new Date(entry.updatedAt).toLocaleString("ja-JP")}</>}
       </p>
-      <div class="flex flex-wrap gap-2">
-        {entry.tags.map((t) => (
-          <span class="text-xs px-2 py-0.5 rounded-full bg-main-50 text-main-700">{t.norm}</span>
-        ))}
-      </div>
+      <TagList tags={entry.tags as ReadonlyArray<Tag>} />
     </header>
 
     <section class="prose max-w-none">
@@ -68,4 +65,3 @@ const related = relatedOf(entries, entry);
     )}
   </article>
 </Layout>
-

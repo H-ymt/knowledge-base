@@ -1,12 +1,29 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import entriesData from "@/data/entries.json";
-import type { KnowledgeEntry } from "@/lib/types";
+import tagsData from "@/data/tags.json";
+import type { KnowledgeEntry, Tag } from "@/lib/types";
+import KnowledgeCard from "@/components/KnowledgeCard.astro";
+import Filters from "@/components/Filters.astro";
 
 const entries = (entriesData as KnowledgeEntry[]);
 const pageSize = 20;
-const pageEntries = entries.slice(0, pageSize);
-const totalPages = Math.ceil(entries.length / pageSize);
+// URL クエリによる簡易フィルタ
+const u = new URL(Astro.url);
+const qTag = u.searchParams.get("tag");
+const qSource = u.searchParams.get("source");
+
+let filtered = entries;
+if (qSource === "gist" || qSource === "zenn") {
+  filtered = filtered.filter((e) => e.source === qSource);
+}
+if (qTag) {
+  filtered = filtered.filter((e) => e.tags.some((t) => t.norm === qTag));
+}
+
+const pageEntries = filtered.slice(0, pageSize);
+const totalPages = Math.ceil(filtered.length / pageSize);
+const allTags = (tagsData as Tag[]);
 ---
 
 <Layout>
@@ -16,28 +33,21 @@ const totalPages = Math.ceil(entries.length / pageSize);
       <p class="text-sm text-main-body-lighter">{entries.length} 件</p>
     </header>
 
-    <ul class="space-y-4">
+    <Filters />
+
+    <ul class="space-y-4" aria-label="記事一覧">
       {pageEntries.map((e) => (
-        <li class="border border-main-200 rounded-md p-4 hover:bg-main-25 transition">
-          <a href={`/knowledge/${e.slug}`} class="block">
-            <h2 class="text-xl mb-1">{e.title}</h2>
-            <p class="text-sm mb-2 text-main-body-lighter">{new Date(e.publishedAt).toLocaleDateString("ja-JP")}</p>
-            <p class="text-sm line-clamp-2">{e.summary}</p>
-            <div class="mt-2 flex flex-wrap gap-2">
-              {e.tags.slice(0, 6).map((t) => (
-                <span class="text-xs px-2 py-0.5 rounded-full bg-main-50 text-main-700">{t.norm}</span>
-              ))}
-            </div>
-          </a>
+        <li>
+          <KnowledgeCard entry={e} />
         </li>
       ))}
+      {pageEntries.length === 0 && <li class="text-sm text-main-body-lighter">該当する記事がありません</li>}
     </ul>
 
     {totalPages > 1 && (
-      <nav class="flex items-center justify-end gap-2 text-sm">
+      <nav class="flex items-center justify-end gap-2 text-sm" aria-label="ページネーション">
         <a class="px-3 py-1 rounded border border-main-300 hover:bg-main-50" href="/knowledge/page/2">次のページ →</a>
       </nav>
     )}
   </section>
 </Layout>
-

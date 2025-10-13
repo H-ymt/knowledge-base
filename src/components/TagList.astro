@@ -1,0 +1,31 @@
+---
+import type { Tag } from "@/lib/types";
+
+export interface Props {
+  tags: ReadonlyArray<Tag>;
+  linkBase?: string; // 例: "/knowledge"
+  paramName?: string; // 例: "tag"
+}
+
+const { tags, linkBase = "/knowledge", paramName = "tag" } = Astro.props as Props;
+
+function buildHref(norm: string): string {
+  const url = new URL(linkBase, "http://local");
+  url.searchParams.set(paramName, norm);
+  const path = url.pathname + (url.search ? url.search : "");
+  return path;
+}
+---
+
+<ul class="flex flex-wrap gap-2" aria-label="タグ一覧">
+  {tags.map((t) => (
+    <li>
+      <a href={buildHref(t.norm)} class="text-xs px-2 py-0.5 rounded-full border border-main-300 hover:bg-main-50">
+        #{t.norm}
+      </a>
+    </li>
+  ))}
+  {tags.length === 0 && <li class="text-sm text-main-body-lighter">タグがありません</li>}
+  
+</ul>
+

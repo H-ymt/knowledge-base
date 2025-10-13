@@ -1,0 +1,34 @@
+---
+import type { KnowledgeEntry } from "@/lib/types";
+
+export interface Props {
+  entry: KnowledgeEntry;
+}
+
+const { entry } = Astro.props as Props;
+---
+
+<article class="border border-main-200 rounded-md p-4 hover:bg-main-25 transition" aria-labelledby={`title-${entry.id}`}>
+  <a href={`/knowledge/${entry.slug}`} class="block focus:outline-none focus:ring-2 focus:ring-purple">
+    <h2 id={`title-${entry.id}`} class="text-xl mb-1">{entry.title}</h2>
+    <p class="text-sm mb-2 text-main-body-lighter">
+      {new Date(entry.publishedAt).toLocaleDateString("ja-JP")}
+      {entry.updatedAt && <>
+        <span aria-hidden="true"> · </span>
+        更新 {new Date(entry.updatedAt).toLocaleDateString("ja-JP")}
+      </>}
+    </p>
+    <p class="text-sm line-clamp-2">{entry.summary}</p>
+    {entry.tags.length > 0 && (
+      <div class="mt-2 flex flex-wrap gap-2">
+        {entry.tags.slice(0, 8).map((t) => (
+          <span class="text-xs px-2 py-0.5 rounded-full bg-main-50 text-main-700">{t.norm}</span>
+        ))}
+      </div>
+    )}
+  </a>
+  <p class="mt-2 text-xs">
+    <a class="text-link hover:underline" href={entry.url} target="_blank" rel="noopener">ソースを開く ↗</a>
+  </p>
+</article>
+

@@ -1,0 +1,38 @@
+---
+import type { Tag } from "@/lib/types";
+import tagsData from "@/data/tags.json";
+
+const allTags = (tagsData as Tag[]);
+const url = new URL(Astro.url);
+const currentSource = url.searchParams.get("source"); // gist|zenn
+const currentTag = url.searchParams.get("tag");
+
+function linkWith(next: Record<string, string | null>): string {
+  const u = new URL(Astro.url);
+  for (const [k, v] of Object.entries(next)) {
+    if (v === null) u.searchParams.delete(k);
+    else u.searchParams.set(k, v);
+  }
+  return u.pathname + (u.search ? u.search : "");
+}
+---
+
+<form class="flex flex-wrap gap-3 items-center" aria-label="フィルタ">
+  <fieldset class="flex items-center gap-2">
+    <legend class="sr-only">ソース</legend>
+    <a href={linkWith({ source: null })} class="px-3 py-1 rounded border border-main-300 hover:bg-main-50" aria-current={currentSource ? "false" : "true"}>All</a>
+    <a href={linkWith({ source: "gist" })} class="px-3 py-1 rounded border border-main-300 hover:bg-main-50" aria-current={currentSource === "gist" ? "true" : "false"}>Gist</a>
+    <a href={linkWith({ source: "zenn" })} class="px-3 py-1 rounded border border-main-300 hover:bg-main-50" aria-current={currentSource === "zenn" ? "true" : "false"}>Zenn</a>
+  </fieldset>
+
+  <label class="text-sm">
+    <span class="mr-2">タグ</span>
+    <select class="px-2 py-1 border border-main-300 rounded" name="tag" on:change={(e) => (location.href = linkWith({ tag: (e.target as HTMLSelectElement).value || null }))}>
+      <option value="" selected={currentTag === null}>すべて</option>
+      {allTags.map((t) => (
+        <option value={t.norm} selected={currentTag === t.norm}>{t.norm}</option>
+      ))}
+    </select>
+  </label>
+</form>
+
