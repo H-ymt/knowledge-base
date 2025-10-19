@@ -1,10 +1,9 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import entriesData from "@/data/entries.json";
-import type { KnowledgeEntry } from "@/lib/types";
-import KnowledgeCard from "@/components/KnowledgeCard.astro";
+import entriesData from "../data/entries.json";
+import KnowledgeCard from "../components/KnowledgeCard.astro";
 
-const entries = entriesData as unknown as KnowledgeEntry[];
+const entries = entriesData;
 const pageSize = 20;
 
 const pageEntries = entries.slice(0, pageSize);
@@ -32,7 +31,7 @@ const totalPages = Math.ceil(entries.length / pageSize);
     {
       totalPages > 1 && (
         <nav class="flex items-center justify-end gap-2 text-sm" aria-label="ページネーション">
-          <a class="border-main-300 hover:bg-main-50 rounded border px-3 py-1" href="/page/2">
+          <a class="hover:bg-main-50 border-main-300 rounded border px-3 py-1" href="/page/2">
             次のページ →
           </a>
         </nav>

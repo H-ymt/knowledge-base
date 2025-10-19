@@ -1,11 +1,5 @@
 ---
-import type { KnowledgeEntry } from "@/lib/types";
-
-export interface Props {
-  entry: KnowledgeEntry;
-}
-
-const { entry } = Astro.props as Props;
+const { entry } = Astro.props;
 const isExternal = entry.source === "zenn" || entry.source === "gist";
 const href = isExternal ? entry.url : `/knowledge/${entry.slug}`;
 ---
@@ -33,6 +27,7 @@ const href = isExternal ? entry.url : `/knowledge/${entry.slug}`;
     {
       entry.tags.length > 0 && (
         <div class="mt-2 flex flex-wrap gap-2">
+          {/* @ts-expect-error - Astroフロントマターでは型注釈が制限されているため */}
           {entry.tags.slice(0, 8).map((t) => (
             <span class="bg-main-50 text-main-700 rounded-full px-2.5 py-0.75 text-xs">{t.norm}</span>
           ))}
