@@ -7,7 +7,7 @@ const href = isExternal ? entry.url : `/knowledge/${entry.slug}`;
 <article class="hover:bg-main-25 rounded-md transition" aria-labelledby={`title-${entry.id}`}>
   <a
     href={href}
-    class="focus:ring-purple block focus:ring-0 focus:outline-0 focus-visible:outline-0"
+    class="focus:ring-purple block focus:outline-0 focus-visible:ring-0"
     target={isExternal ? "_blank" : undefined}
     rel={isExternal ? "noopener" : undefined}
   >
