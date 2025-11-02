@@ -2,9 +2,9 @@
   {
     "id": "6405c20df939f89c058efcf5ed2cf7ff",
     "source": "gist",
-    "slug": "react-x-typescript-agent-md-6405c20df939f89c058efcf5ed2cf7ff",
-    "title": "React x TypeScript のフロントエンド開発における AGENT.md のサンプル",
-    "summary": "React x TypeScript のフロントエンド開発における AGENT.md のサンプル",
+    "slug": "agents-md-6405c20df939f89c058efcf5ed2cf7ff",
+    "title": "AGENTS.md のサンプル",
+    "summary": "AGENTS.md のサンプル",
     "url": "https://gist.github.com/H-ymt/6405c20df939f89c058efcf5ed2cf7ff",
     "tags": [
       {
@@ -17,15 +17,30 @@
       }
     ],
     "publishedAt": "2025-09-21T10:23:20.000Z",
-    "updatedAt": "2025-09-26T12:39:18.000Z",
+    "updatedAt": "2025-10-15T15:05:49.000Z",
     "author": "H-ymt"
+  },
+  {
+    "id": "https://zenn.dev/h_ymt/articles/e4a07ca71fd1cb",
+    "source": "zenn",
+    "slug": "cd-zoxide-https-zenn-dev-h-ymt-articles-e4a07ca71fd1cb",
+    "title": "cdコマンドを強化する zoxide でターミナル操作を快適にする",
+    "summary": "\n zoxide とは\nLinux コマンドcdの改良版。z コマンドで移動したディレクトリを履歴としてデータベースに保存し、頻繁に使用するディレクトリに高速に移動ができるようになる。\n例えば、今までcdで次のように移動していたものが、\n\n~\ncd path/to/develop/project-name\n\nzoxide インストール後に移動した場合は、データベースに履歴が保存され、次のコマンドだけで移動できる（z pro とかだけでも移動できる）\n\n~\nz project-name\n\n\n zoxide のインストール\nhomebrew でインストール\nbrew install zoxi...",
+    "url": "https://zenn.dev/h_ymt/articles/e4a07ca71fd1cb",
+    "tags": [
+      {
+        "raw": "zenn",
+        "norm": "zenn"
+      }
+    ],
+    "publishedAt": "2025-04-06T10:32:14.000Z"
   },
   {
     "id": "bd73f11aae14ea471c43c19c939dca08",
     "source": "gist",
     "slug": "react-x-css-modules-bd73f11aae14ea471c43c19c939dca08",
-    "title": "React x CSS Modulesでつくる汎用性の高いボタンコンポーネント",
-    "summary": "React x CSS Modulesでつくる汎用性の高いボタンコンポーネント",
+    "title": "汎用性を考えた React x CSS Modules でつくるボタンコンポーネント",
+    "summary": "汎用性を考えた React x CSS Modules でつくるボタンコンポーネント",
     "url": "https://gist.github.com/H-ymt/bd73f11aae14ea471c43c19c939dca08",
     "tags": [
       {
@@ -38,7 +53,7 @@
       }
     ],
     "publishedAt": "2025-03-23T11:07:52.000Z",
-    "updatedAt": "2025-03-23T11:08:55.000Z",
+    "updatedAt": "2025-10-15T13:13:48.000Z",
     "author": "H-ymt"
   },
   {
@@ -278,5 +293,50 @@
     "publishedAt": "2024-04-25T09:19:15.000Z",
     "updatedAt": "2024-11-23T10:57:24.000Z",
     "author": "H-ymt"
+  },
+  {
+    "id": "https://zenn.dev/h_ymt/articles/a27824b0106d2d",
+    "source": "zenn",
+    "slug": "astro-url-pathname-https-zenn-dev-h-ymt-articles-a27824b0106d2d",
+    "title": "Astro.url.pathname が本番環境で機能しない問題を解決する",
+    "summary": "\n 環境\n\nAstro: 4.0.3\nPackage manager: pnpm\n\n\n 発生した不具合\n色々な Web サイトで見かける、現在の path とナビゲーションメニューの path が一致している場合にメニューをハイライト表示する実装を Astro.url.pathnameで実装していた時に起こったバグ(?)。\n↓ こんなやつ（ /about ページのとき ）\n\n実際のコード（CSS は省略）\nMenu.astro\n---\nconst navItems = [\n  {\n    name: \"Home\",\n    path: \"/\",\n  },\n  {\n    name: \"A...",
+    "url": "https://zenn.dev/h_ymt/articles/a27824b0106d2d",
+    "tags": [
+      {
+        "raw": "zenn",
+        "norm": "zenn"
+      }
+    ],
+    "publishedAt": "2023-12-11T05:59:34.000Z"
+  },
+  {
+    "id": "https://zenn.dev/h_ymt/articles/69b9ee1b43b14d",
+    "source": "zenn",
+    "slug": "vanilla-js-https-zenn-dev-h-ymt-articles-69b9ee1b43b14d",
+    "title": "Vanilla JSでアクセシビリティを考慮したハンバーガーメニューをつくる",
+    "summary": "\n はじめに\n「Vanilla JS ハンバーガーメニュー アクセシビリティ」で Google 検索したとき、なかなか良い記事に辿り着けなかったので備忘録としてソースコードを残しておく。（※ライブラリ等は使用しません。）\n最終的なソースコードはこちら。\nhttps://codesandbox.io/embed/eager-elion-6ffwzs?fontsize=14&hidenavigation=1&theme=dark&view=editor\n\n 実現したいこと\n\n\nハンバーガーメニューをクリックするとナビゲーションが開き、ハンバーガーメニューの「≡」と「×...",
+    "url": "https://zenn.dev/h_ymt/articles/69b9ee1b43b14d",
+    "tags": [
+      {
+        "raw": "zenn",
+        "norm": "zenn"
+      }
+    ],
+    "publishedAt": "2023-09-30T07:42:14.000Z"
+  },
+  {
+    "id": "https://zenn.dev/h_ymt/articles/5e44b4967f6764",
+    "source": "zenn",
+    "slug": "react-zenn-api-https-zenn-dev-h-ymt-articles-5e44b4967f6764",
+    "title": "ReactでZennの記事をAPIで取得する",
+    "summary": "\n 概要\n個人サイトに Zenn の記事を掲載したときのメモ\n\n Zenn の記事を取得する API\nZenn の記事は以下の API から取得\nhttps://zenn.dev/api/articles?username=(ユーザーID)&order=latest\n\n ソースコード\n\nBlogList.tsx\ninterface Post {\n  id: number;\n  path: string;\n  emoji: string;\n  title: string;\n  published_at: string;\n}\n\nexport default async functio...",
+    "url": "https://zenn.dev/h_ymt/articles/5e44b4967f6764",
+    "tags": [
+      {
+        "raw": "zenn",
+        "norm": "zenn"
+      }
+    ],
+    "publishedAt": "2023-09-06T15:23:30.000Z"
   }
 ]

@@ -53,7 +53,7 @@ export function createZennClient(config: ZennClientConfig = {}): ZennClient {
 
 // --- Minimal RSS/Atom Parser (items/entries only) ---
 function parseTag(xml: string, tag: string): string[] {
-  const re = new RegExp(`<${tag}[^>]*>([\s\S]*?)<\/${tag}>`, "gi");
+  const re = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, "gi");
   const out: string[] = [];
   let m: RegExpExecArray | null;
   while ((m = re.exec(xml)) !== null) out.push(m[1].trim());
@@ -61,12 +61,16 @@ function parseTag(xml: string, tag: string): string[] {
 }
 
 function unescapeHtml(s: string): string {
-  return s
+  // CDATAセクションを処理
+  let result = s.replace(/<!\[CDATA\[(.*?)\]\]>/gs, "$1");
+  // HTMLエンティティをデコード
+  result = result
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">")
     .replace(/&amp;/g, "&")
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'");
+  return result;
 }
 
 function parseLinkHref(xml: string): string | undefined {
